@@ -414,8 +414,8 @@ select.fi{cursor:pointer}
   <div class="sg">
     <div class="sgt">🤖 Motore AI</div>
     <div class="sr" style="flex-direction:column;align-items:flex-start;gap:10px">
-      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Riconoscimento alimenti</div><select class="fi fi-sm" id="engineRecognition" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
-      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Generazione ricette</div><select class="fi fi-sm" id="engineRecipes" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
+      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Riconoscimento alimenti</div><select class="fi fi-sm" id="engineRecognition" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini 2.0 Flash ⭐</option></select></div>
+      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Generazione ricette</div><select class="fi fi-sm" id="engineRecipes" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini 2.0 Flash ⭐</option></select></div>
     </div>
   </div>
   <div class="sg">
@@ -618,25 +618,98 @@ const ICO={
   clock:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
 };
 
-// ═══ STORAGE ═══
+// ═══ FIREBASE CONFIG ═══
+const firebaseConfig={
+  apiKey:"AIzaSyDstpamiXabALVvsz2F50oM23qz_Yqmrps",
+  authDomain:"pantrio-39c10.firebaseapp.com",
+  projectId:"pantrio-39c10",
+  storageBucket:"pantrio-39c10.firebasestorage.app",
+  messagingSenderId:"136520199053",
+  appId:"1:136520199053:web:5714145bc0817085652bc4"
+};
+
+// Carica Firebase SDK via CDN (inserito in modo asincrono)
+let db=null;
+async function initFirebase(){
+  try{
+    const {initializeApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const {getFirestore,doc,getDoc,setDoc,collection,getDocs}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const app=initializeApp(firebaseConfig);
+    db=getFirestore(app);
+    window._fs={doc,getDoc,setDoc,collection,getDocs,db};
+    console.log('Firebase inizializzato');
+    return true;
+  }catch(e){console.error('Firebase non disponibile:',e);return false;}
+}
+
+// ID utente anonimo persistente (localStorage) — identifica il dispositivo
+function getUserId(){
+  let uid=localStorage.getItem('pantrio_uid');
+  if(!uid){uid='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('pantrio_uid',uid);}
+  return uid;
+}
+const UID=getUserId();
+
+// ═══ STORAGE — ibrido localStorage + Firestore ═══
 function lGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
 function lSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 const K_PROD='pantrio_v2_instances',K_FOOD='pantrio_v2_alimenti',K_SET='pantrio_v2_settings';
 let instances=[],alimenti=[];
 let settings={customApis:[],engineRecognition:'openai',engineRecipes:'openai',keys:{openai:'',anthropic:'',gemini:''},aiConfidence:'normal',aiNutri:'show_estimated'};
 
-function loadAll(){
-  setSS('Caricamento...');
-  const p=lGet(K_PROD),f=lGet(K_FOOD),s=lGet(K_SET);
-  instances=Array.isArray(p)?p:[];alimenti=Array.isArray(f)?f:[];
-  if(s){settings={...settings,...s};if(!settings.keys)settings.keys={openai:'',anthropic:'',gemini:''};}
-  refreshAll();updateSettingsUI();loadClassicRecipes();buildChips();checkApiKeyWarning();
-  setSS('Pronto · '+now());
+// Salva su Firestore (asincrono, non blocca UI)
+async function saveToCloud(key,data){
+  if(!db||!window._fs)return;
+  try{
+    const {doc,setDoc,db:fdb}=window._fs;
+    await setDoc(doc(fdb,'users',UID,'data',key),{payload:JSON.stringify(data),updatedAt:Date.now()});
+  }catch(e){console.warn('Cloud save failed:',e);}
 }
-function saveInstances(){lSet(K_PROD,instances);setSS('Salvato · '+now());}
-function saveAlimenti(){lSet(K_FOOD,alimenti);}
+
+// Carica da Firestore — priorità cloud su locale
+async function loadFromCloud(key){
+  if(!db||!window._fs)return null;
+  try{
+    const {doc,getDoc,db:fdb}=window._fs;
+    const snap=await getDoc(doc(fdb,'users',UID,'data',key));
+    if(snap.exists()){return JSON.parse(snap.data().payload);}
+  }catch(e){console.warn('Cloud load failed:',e);}
+  return null;
+}
+
+async function loadAll(){
+  setSS('Caricamento...');
+  // Carica settings sempre da locale (contengono API keys)
+  const s=lGet(K_SET);
+  if(s){settings={...settings,...s};if(!settings.keys)settings.keys={openai:'',anthropic:'',gemini:''};}
+
+  // Inizializza Firebase
+  await initFirebase();
+
+  // Prova a caricare da cloud, fallback su locale
+  const cloudInstances=await loadFromCloud('instances');
+  const cloudAlimenti=await loadFromCloud('alimenti');
+  instances=Array.isArray(cloudInstances)?cloudInstances:(Array.isArray(lGet(K_PROD))?lGet(K_PROD):[]);
+  alimenti=Array.isArray(cloudAlimenti)?cloudAlimenti:(Array.isArray(lGet(K_FOOD))?lGet(K_FOOD):[]);
+
+  // Sincronizza locale con cloud
+  lSet(K_PROD,instances);lSet(K_FOOD,alimenti);
+
+  refreshAll();updateSettingsUI();loadClassicRecipes();buildChips();checkApiKeyWarning();
+  setSS('Sincronizzato · '+now());
+}
+
+function saveInstances(){
+  lSet(K_PROD,instances);
+  saveToCloud('instances',instances);
+  setSS('Salvato · '+now());
+}
+function saveAlimenti(){
+  lSet(K_FOOD,alimenti);
+  saveToCloud('alimenti',alimenti);
+}
 function saveSettings(){lSet(K_SET,settings);checkApiKeyWarning();}
-function syncData(){loadAll();}
+async function syncData(){setSS('Sincronizzazione...');await loadAll();}
 function setSS(m){document.getElementById('syncStatus').textContent=m;}
 function now(){return new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});}
 function checkApiKeyWarning(){const h=settings.keys.openai||settings.keys.anthropic||settings.keys.gemini;document.getElementById('apiWarnBanner').style.display=h?'none':'flex';}
