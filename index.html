@@ -913,36 +913,68 @@ function toggleBarcode(){barcodeActive?stopBarcode():startBarcode();}
 
 function startBarcode(){
   const statusEl=document.getElementById('barcodeStatus');
-  if(typeof Quagga==='undefined'){statusEl.textContent='⚠️ Libreria non disponibile. Usa il campo manuale.';statusEl.className='barcode-status err';return;}
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
-    .then(stream=>{
-      stream.getTracks().forEach(t=>t.stop());
-      document.getElementById('barcodeVideoWrap').style.display='block';
-      document.getElementById('barcodeBtn').textContent='⏹ Ferma scansione';
+  const videoEl=document.getElementById('barcodeVideo');
+  const wrap=document.getElementById('barcodeVideoWrap');
+
+  if(typeof Quagga==='undefined'){
+    statusEl.textContent='⚠️ Libreria non disponibile. Usa il campo manuale.';
+    statusEl.className='barcode-status err';return;
+  }
+
+  statusEl.textContent='📷 Richiedo accesso fotocamera...';
+  statusEl.className='barcode-status';
+
+  // FIX: colleghiamo lo stream direttamente al video element
+  // PRIMA di inizializzare Quagga, così il video è già visibile
+  navigator.mediaDevices.getUserMedia({
+    video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}
+  }).then(stream=>{
+    // Mostra il video immediatamente con lo stream grezzo
+    wrap.style.display='block';
+    videoEl.srcObject=stream;
+    videoEl.play().catch(()=>{});
+    document.getElementById('barcodeBtn').textContent='⏹ Ferma scansione';
+    statusEl.textContent='📷 Punta la fotocamera sul barcode...';
+    barcodeActive=true;
+
+    // Ora fermiamo lo stream grezzo e lasciamo gestire a Quagga
+    stream.getTracks().forEach(t=>t.stop());
+    videoEl.srcObject=null;
+
+    Quagga.init({
+      inputStream:{
+        name:'Live',type:'LiveStream',
+        target:videoEl,
+        constraints:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}
+      },
+      decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader']},
+      locate:true,numOfWorkers:0,frequency:5
+    },err=>{
+      if(err){
+        console.error('Quagga err:',err);
+        statusEl.textContent='❌ Errore avvio fotocamera. Usa il campo manuale.';
+        statusEl.className='barcode-status err';
+        stopBarcode();return;
+      }
+      Quagga.start();
       statusEl.textContent='📷 Punta la fotocamera sul barcode...';
-      statusEl.className='barcode-status';
-      barcodeActive=true;
-      Quagga.init({
-        inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('barcodeVideo'),constraints:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},
-        decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader']},
-        locate:true,numOfWorkers:2,frequency:10
-      },err=>{
-        if(err){statusEl.textContent='❌ Fotocamera non disponibile. Usa il campo manuale.';statusEl.className='barcode-status err';stopBarcode();return;}
-        Quagga.start();
-        let lastCode='',lastTime=0;
-        Quagga.onDetected(result=>{
-          const code=result.codeResult.code,now=Date.now();
-          if(code===lastCode&&now-lastTime<2000)return;
-          lastCode=code;lastTime=now;
-          if(code&&code.length>=8){
-            statusEl.textContent=`✅ Codice: ${code}`;
-            statusEl.className='barcode-status ok';
-            stopBarcode();lookupBarcode(code);
-          }
-        });
+      let lastCode='',lastTime=0;
+      Quagga.onDetected(result=>{
+        const code=result.codeResult.code,now=Date.now();
+        if(code===lastCode&&now-lastTime<2000)return;
+        lastCode=code;lastTime=now;
+        if(code&&code.length>=8){
+          statusEl.textContent=`✅ Codice: ${code}`;
+          statusEl.className='barcode-status ok';
+          stopBarcode();lookupBarcode(code);
+        }
       });
-    })
-    .catch(()=>{statusEl.textContent='❌ Permesso fotocamera negato. Usa il campo manuale.';statusEl.className='barcode-status err';});
+    });
+  }).catch(err=>{
+    console.error('Camera err:',err);
+    statusEl.textContent='❌ Permesso fotocamera negato. Usa il campo manuale sotto.';
+    statusEl.className='barcode-status err';
+  });
 }
 
 function stopBarcode(){
