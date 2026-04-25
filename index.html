@@ -806,33 +806,36 @@ function setAuthTab(tab,el){
 
 // Bootstrap app
 async function bootstrap(){
-  // Mostra subito login screen come default
   const loginScreen=document.getElementById('loginScreen');
   const appContent=document.getElementById('appContent');
-  if(loginScreen)loginScreen.style.display='flex';
-  if(appContent)appContent.style.display='none';
 
+  // Mostra subito l'app con dati locali — non aspettare Firebase
+  if(loginScreen)loginScreen.style.display='none';
+  if(appContent)appContent.style.display='block';
+  instances=Array.isArray(lGet(K_PROD))?lGet(K_PROD):[];
+  alimenti=Array.isArray(lGet(K_FOOD))?lGet(K_FOOD):[];
+  const s=lGet(K_SET);
+  if(s){settings={...settings,...s};if(!settings.keys)settings.keys={openai:'',anthropic:'',gemini:''};}
+  refreshAll();updateSettingsUI();loadClassicRecipes();buildChips();checkApiKeyWarning();
+  setSS('Locale · '+now());
+
+  // Poi inizializza Firebase in background
   const ok=await initFirebase();
-  if(!ok){
-    // Firebase non disponibile — mostra app senza login
-    if(loginScreen)loginScreen.style.display='none';
-    if(appContent)appContent.style.display='block';
-    await loadAll();
-    return;
-  }
+  if(!ok)return;
 
   const {onAuthStateChanged,auth}=window._auth;
   onAuthStateChanged(auth,async user=>{
     currentUser=user;
     updateAuthUI();
     if(user){
+      // Loggato — nascondi login, carica da cloud
       if(loginScreen)loginScreen.style.display='none';
       if(appContent)appContent.style.display='block';
+      await loadAll();
     }else{
+      // Non loggato — mostra login screen sopra l'app
       if(loginScreen)loginScreen.style.display='flex';
-      if(appContent)appContent.style.display='none';
     }
-    await loadAll();
   });
 }
 function checkApiKeyWarning(){const h=settings.keys.openai||settings.keys.anthropic||settings.keys.gemini;document.getElementById('apiWarnBanner').style.display=h?'none':'flex';}
