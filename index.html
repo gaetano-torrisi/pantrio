@@ -806,15 +806,25 @@ function setAuthTab(tab,el){
 
 // Bootstrap app
 async function bootstrap(){
-  await initFirebase();
+  // Mostra subito login screen come default
+  const loginScreen=document.getElementById('loginScreen');
+  const appContent=document.getElementById('appContent');
+  if(loginScreen)loginScreen.style.display='flex';
+  if(appContent)appContent.style.display='none';
+
+  const ok=await initFirebase();
+  if(!ok){
+    // Firebase non disponibile — mostra app senza login
+    if(loginScreen)loginScreen.style.display='none';
+    if(appContent)appContent.style.display='block';
+    await loadAll();
+    return;
+  }
+
   const {onAuthStateChanged,auth}=window._auth;
   onAuthStateChanged(auth,async user=>{
     currentUser=user;
     updateAuthUI();
-    await loadAll();
-    // Mostra login screen se non loggato
-    const loginScreen=document.getElementById('loginScreen');
-    const appContent=document.getElementById('appContent');
     if(user){
       if(loginScreen)loginScreen.style.display='none';
       if(appContent)appContent.style.display='block';
@@ -822,6 +832,7 @@ async function bootstrap(){
       if(loginScreen)loginScreen.style.display='flex';
       if(appContent)appContent.style.display='none';
     }
+    await loadAll();
   });
 }
 function checkApiKeyWarning(){const h=settings.keys.openai||settings.keys.anthropic||settings.keys.gemini;document.getElementById('apiWarnBanner').style.display=h?'none':'flex';}
