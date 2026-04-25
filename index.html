@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>La Mia Dispensa</title>
+<title>Pantrio</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -23,10 +23,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 
 .header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 16px 12px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:10px}
 .header-brand{flex:1}
-.header-brand h1{font-size:19px;font-weight:800;letter-spacing:-.5px}
-.header-brand h1 em{color:var(--accent);font-style:normal}
+.header-brand h1{font-size:21px;font-weight:800;letter-spacing:-.5px;color:var(--accent)}
 .header-sub{font-size:11px;color:var(--text3);margin-top:1px;font-weight:500}
 .sync-btn{background:none;border:none;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text3)}
+
+/* API KEY WARNING BANNER */
+.api-warn-banner{background:#FFF3CD;border-bottom:2px solid #FFC107;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:#856404}
+.api-warn-banner svg{flex-shrink:0;stroke:#856404}
+.api-warn-banner a{color:var(--accent);text-decoration:underline;cursor:pointer}
 
 .stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-bottom:1px solid var(--border);padding:12px 4px}
 .stat{text-align:center;padding:4px 0}
@@ -106,22 +110,37 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .scaduti-title{font-size:13px;font-weight:700;color:var(--danger);display:flex;align-items:center;gap:7px}
 .scaduti-del-all{font-size:12px;font-weight:700;color:var(--danger);background:none;border:none;cursor:pointer}
 
-/* CHIPS con mostra-tutti */
 .chips-wrap{margin-bottom:14px}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0}
 .chip{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--text3);transition:.15s;white-space:nowrap}
 .chip.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
 .chips-toggle{margin-top:8px;background:none;border:none;cursor:pointer;font-size:12px;font-weight:600;color:var(--accent);padding:4px 0;display:flex;align-items:center;gap:4px}
 
-.cambox{background:#14142A;border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;margin-bottom:16px}
-.vf{width:160px;height:160px;border:1px solid rgba(255,255,255,.1);border-radius:12px;margin:0 auto 14px;position:relative;display:flex;align-items:center;justify-content:center}
+/* FOTO MULTIPLA */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.photo-thumb{position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg);border:1px solid var(--border)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .remove-photo{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.6);border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff}
+.add-photo-btn{aspect-ratio:1;border-radius:var(--radius-sm);border:2px dashed var(--accent-mid);background:var(--accent-light);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;gap:4px;color:var(--accent);font-size:11px;font-weight:600}
+
+/* BARCODE */
+.barcode-section{background:#14142A;border-radius:var(--radius);padding:20px 16px;margin-bottom:12px}
+.barcode-video-wrap{position:relative;width:100%;border-radius:var(--radius-sm);overflow:hidden;background:#000;margin-bottom:12px;display:none}
+.barcode-video-wrap video{width:100%;display:block}
+.barcode-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.barcode-line{width:70%;height:2px;background:rgba(176,171,223,0.8);box-shadow:0 0 8px rgba(176,171,223,0.6);animation:scan 2s linear infinite}
+@keyframes scan{0%{transform:translateY(-40px)}100%{transform:translateY(40px)}}
+.barcode-btns{display:flex;gap:8px}
+.barcode-status{font-size:12px;color:rgba(255,255,255,.5);text-align:center;margin-top:8px;min-height:18px}
+
+.cambox{background:#14142A;border-radius:var(--radius);padding:24px 20px;text-align:center;cursor:pointer;margin-bottom:12px}
+.vf{width:150px;height:150px;border:1px solid rgba(255,255,255,.1);border-radius:12px;margin:0 auto 14px;position:relative;display:flex;align-items:center;justify-content:center}
 .c{position:absolute;width:18px;height:18px}
 .c.tl{top:-1px;left:-1px;border-top:2.5px solid var(--accent-mid);border-left:2.5px solid var(--accent-mid);border-radius:4px 0 0 0}
 .c.tr{top:-1px;right:-1px;border-top:2.5px solid var(--accent-mid);border-right:2.5px solid var(--accent-mid);border-radius:0 4px 0 0}
 .c.bl{bottom:-1px;left:-1px;border-bottom:2.5px solid var(--accent-mid);border-left:2.5px solid var(--accent-mid);border-radius:0 0 0 4px}
 .c.br{bottom:-1px;right:-1px;border-bottom:2.5px solid var(--accent-mid);border-right:2.5px solid var(--accent-mid);border-radius:0 0 4px 0}
 .sl{position:absolute;height:2px;background:linear-gradient(90deg,transparent,var(--accent-mid),transparent);width:80%;left:10%;animation:scan 2s linear infinite}
-@keyframes scan{0%{top:15%}100%{top:85%}}
 .camtxt{color:rgba(255,255,255,.35);font-size:13px;font-weight:500;margin-top:4px}
 
 .fg{margin-bottom:13px}
@@ -137,6 +156,15 @@ select.fi{cursor:pointer}
 .nutri-input-label{font-size:10px;color:var(--text3);font-weight:600;margin-bottom:4px;display:block;text-transform:uppercase;letter-spacing:.04em}
 .nutri-input{width:100%;padding:8px 6px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#FAFAF9;color:var(--text);font-size:13px;font-weight:700;text-align:center;-webkit-appearance:none}
 .nutri-input:focus{outline:none;border-color:var(--accent);background:#fff}
+
+/* QUANTITÀ con unità */
+.qty-wrap{display:flex;gap:8px;align-items:flex-end}
+.qty-wrap .fi-sm{flex:1}
+.qty-unit-toggle{display:flex;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0}
+.qty-unit-btn{padding:9px 12px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--text3);transition:.15s}
+.qty-unit-btn.active{background:var(--accent);color:#fff}
+.weight-estimate{font-size:11px;color:var(--text3);margin-top:4px;font-style:italic;min-height:16px}
+
 .btnrow{display:flex;gap:8px;margin-top:14px}
 .btnp{flex:1;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);padding:13px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
 .btnp:active{opacity:.85}
@@ -146,6 +174,7 @@ select.fi{cursor:pointer}
 .aibox{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--radius-sm);padding:13px;margin-bottom:12px;font-size:13px;color:var(--accent);line-height:1.6;font-weight:500}
 .aibox.error{background:var(--danger-bg);border-color:rgba(184,50,50,.3);color:var(--danger)}
 .aibox.warn{background:var(--warn-bg);border-color:rgba(138,82,8,.2);color:var(--warn)}
+.aibox.success{background:var(--ok-bg);border-color:rgba(42,102,18,.2);color:var(--ok)}
 .thinking{display:inline-block;animation:pulse 1.2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .ld::after{content:'...';animation:ld 1.2s infinite}
@@ -153,21 +182,19 @@ select.fi{cursor:pointer}
 
 .confirm-card{background:var(--surface);border:1.5px solid var(--accent-mid);border-radius:var(--radius);padding:16px;margin-bottom:12px}
 .estimated-note{font-size:10px;color:var(--warn);font-weight:600;margin-top:4px;margin-bottom:8px}
-
 .dup-choice{background:var(--warn-bg);border:1.5px solid rgba(138,82,8,.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px}
-
-/* EDIT mode banner */
 .edit-banner{background:#FFF7ED;border:1.5px solid #FCD34D;border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:12px;font-size:13px;font-weight:600;color:#92400E;display:flex;align-items:center;gap:8px}
 
-.recipe-subtabs{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:14px;gap:3px}
-.rsubtab{flex:1;padding:8px 6px;border-radius:7px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:700;color:var(--text3);transition:.15s;text-align:center}
-.rsubtab.active{background:var(--accent);color:#fff}
 .mealdb-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
 .mealdb-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 10px;cursor:pointer;text-align:center;box-shadow:var(--shadow);transition:.15s}
 .mealdb-item:active{transform:scale(.97)}
 .mealdb-item .mi-emoji{font-size:28px;margin-bottom:6px;line-height:1}
 .mealdb-item .mi-name{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
 .mealdb-item .mi-origin{font-size:10px;color:var(--text3);margin-top:2px}
+
+.recipe-subtabs{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:14px;gap:3px}
+.rsubtab{flex:1;padding:8px 6px;border-radius:7px;border:none;background:none;cursor:pointer;font-size:12px;font-weight:700;color:var(--text3);transition:.15s;text-align:center}
+.rsubtab.active{background:var(--accent);color:#fff}
 .ing-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
 .ing-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}
 .ing-item.selected{border-color:var(--accent);background:var(--accent-light)}
@@ -184,10 +211,6 @@ select.fi{cursor:pointer}
 .src-a{background:var(--accent-light);color:var(--accent)}
 .rtitle{font-size:15px;font-weight:700;margin-bottom:5px;letter-spacing:-.1px;line-height:1.3}
 .rmeta{font-size:12px;color:var(--text3);margin-bottom:8px;font-weight:500}
-.rlink{font-size:12px;color:var(--accent);font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:4px;margin-top:8px}
-.src-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
-.stab{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:none;cursor:pointer;color:var(--text3);white-space:nowrap;transition:.15s}
-.stab.active{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
 
 .sg{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow)}
 .sgt{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;padding:12px 14px 10px;border-bottom:1px solid var(--border)}
@@ -234,9 +257,10 @@ select.fi{cursor:pointer}
 <body>
 <div class="app">
 
+<!-- HEADER -->
 <div class="header">
   <div class="header-brand">
-    <h1>La mia <em>Dispensa</em></h1>
+    <h1>Pantrio</h1>
     <p class="header-sub" id="syncStatus">Caricamento...</p>
   </div>
   <button class="sync-btn" onclick="syncData()">
@@ -244,6 +268,13 @@ select.fi{cursor:pointer}
   </button>
 </div>
 
+<!-- API WARNING BANNER -->
+<div class="api-warn-banner" id="apiWarnBanner" style="display:none">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <span>Nessuna API key configurata — l'AI funziona solo in questa chat. <a onclick="switchTab('settings')">Configura nelle Impostazioni →</a></span>
+</div>
+
+<!-- STATS -->
 <div class="stats">
   <div class="stat"><div class="stat-n c-ok" id="sTotal">0</div><div class="stat-l">Alimenti</div></div>
   <div class="stat"><div class="stat-n c-neu" id="sFrigo">0</div><div class="stat-l">Frigo</div></div>
@@ -257,11 +288,11 @@ select.fi{cursor:pointer}
   <div class="quick-add-bar">
     <button class="qa-btn primary" onclick="switchTab('scan')">
       <div class="qa-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-      <span class="qa-lbl">Scansiona</span>
+      <span class="qa-lbl">Fotografa alimento</span>
     </button>
     <button class="qa-btn" onclick="openQuickManual()">
       <div class="qa-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-      <span class="qa-lbl">Manuale</span>
+      <span class="qa-lbl">Inserimento manuale</span>
     </button>
   </div>
   <div id="alertsBox"></div>
@@ -314,19 +345,34 @@ select.fi{cursor:pointer}
   <div id="dispensaList"></div>
 </div>
 
-<!-- SCAN -->
+<!-- SCAN / FOTOGRAFA -->
 <div id="tab-scan" class="tab">
-  <div class="info-banner">Su dispositivi mobili usa l'inserimento manuale. La fotocamera è disponibile esportando l'app su GitHub Pages.</div>
-  <div class="cambox" onclick="triggerUpload()">
-    <div class="vf">
-      <div class="c tl"></div><div class="c tr"></div><div class="c bl"></div><div class="c br"></div>
-      <div class="sl"></div>
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+  <div class="info-banner">📱 Su dispositivi mobili usa l'inserimento manuale. La fotocamera è disponibile dopo il deploy su GitHub Pages.</div>
+
+  <!-- BARCODE SCANNER -->
+  <div class="barcode-section">
+    <div style="color:rgba(255,255,255,.7);font-size:13px;font-weight:600;margin-bottom:10px">📦 Scansiona barcode</div>
+    <div class="barcode-video-wrap" id="barcodeVideoWrap">
+      <video id="barcodeVideo" playsinline muted></video>
+      <div class="barcode-overlay"><div class="barcode-line"></div></div>
     </div>
-    <div class="camtxt">Tocca per fotografare o caricare</div>
+    <div class="barcode-btns">
+      <button class="btnp" style="font-size:13px" id="barcodeBtn" onclick="toggleBarcode()">▶ Avvia scansione barcode</button>
+    </div>
+    <div class="barcode-status" id="barcodeStatus">Punta la fotocamera su un barcode</div>
   </div>
-  <input type="file" id="imgInput" accept="image/*" capture="environment" style="display:none" onchange="handleImg(event)">
-  <img id="imgPrev" alt="">
+
+  <!-- FOTO MULTIPLA -->
+  <div style="margin-bottom:4px;font-size:12px;font-weight:600;color:var(--text3)">📷 Fotografa alimento</div>
+  <div class="photo-grid" id="photoGrid"></div>
+  <div style="margin-bottom:12px">
+    <button class="add-photo-btn" id="addPhotoBtn" onclick="triggerUpload()" style="width:100%;padding:14px;border-radius:var(--radius-sm);flex-direction:row;gap:8px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      Aggiungi foto <span id="photoCountLabel" style="color:var(--text3);font-weight:400"></span>
+    </button>
+    <input type="file" id="imgInput" accept="image/*" capture="environment" style="display:none" onchange="handleImg(event)" multiple>
+  </div>
+
   <div class="fg">
     <label class="fl">oppure inserisci il nome manualmente</label>
     <input class="fi" id="manualName" placeholder="es. Latte parzialmente scremato">
@@ -337,13 +383,7 @@ select.fi{cursor:pointer}
 
 <!-- RICETTE -->
 <div id="tab-ricette" class="tab">
-  <div class="src-tabs">
-    <button class="stab active" onclick="setSrcTab('all',this)">Tutti</button>
-    <button class="stab" onclick="setSrcTab('italian',this)">🇮🇹 Italiane</button>
-    <button class="stab" onclick="setSrcTab('american',this)">🇺🇸 Americane</button>
-    <button class="stab" onclick="setSrcTab('ai',this)">🤖 AI</button>
-  </div>
-  <div class="sh"><span class="st">Ricette popolari</span></div>
+  <div class="sh"><span class="st">🇺🇸 Ricette americane</span></div>
   <div class="mealdb-grid" id="classicRecipes"></div>
   <button class="btnp" style="width:100%;margin-bottom:14px" onclick="showCreateRecipes()">Crea ricette con i miei ingredienti</button>
   <div id="recipeResultsArea" style="display:none">
@@ -366,7 +406,7 @@ select.fi{cursor:pointer}
   <div class="spesa-placeholder">
     <div class="sp-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
     <h2>Lista della Spesa</h2>
-    <p>Questa sezione è in arrivo!<br>Qui potrai gestire la tua lista della spesa in modo intelligente, basata sugli alimenti in scadenza e sulle ricette che vuoi preparare.</p>
+    <p>Questa sezione è in arrivo!<br>Basata sugli alimenti in scadenza e sulle ricette che vuoi preparare.</p>
   </div>
 </div>
 
@@ -380,8 +420,8 @@ select.fi{cursor:pointer}
   <div class="sg">
     <div class="sgt">🤖 Motore AI</div>
     <div class="sr" style="flex-direction:column;align-items:flex-start;gap:10px">
-      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Riconoscimento alimenti</div><select class="fi fi-sm" id="engineRecognition" onchange="saveEngineSettings()"><option value="openai">OpenAI (ChatGPT)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
-      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Generazione ricette</div><select class="fi fi-sm" id="engineRecipes" onchange="saveEngineSettings()"><option value="openai">OpenAI (ChatGPT)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
+      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Riconoscimento alimenti</div><select class="fi fi-sm" id="engineRecognition" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
+      <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Generazione ricette</div><select class="fi fi-sm" id="engineRecipes" onchange="saveEngineSettings()"><option value="openai">OpenAI (GPT-4o mini)</option><option value="anthropic">Anthropic (Claude)</option><option value="gemini">Google Gemini</option></select></div>
     </div>
   </div>
   <div class="sg">
@@ -389,14 +429,14 @@ select.fi{cursor:pointer}
     <div class="sr" style="flex-direction:column;align-items:flex-start;gap:8px">
       <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Soglia confidenza</div><select class="fi fi-sm" id="aiConfidence" onchange="saveAIConfig()"><option value="strict">Rigorosa</option><option value="normal" selected>Normale</option><option value="lenient">Permissiva</option></select></div>
       <div style="width:100%"><div class="slabel" style="margin-bottom:4px">Valori nutrizionali stimati</div><select class="fi fi-sm" id="aiNutri" onchange="saveAIConfig()"><option value="show_estimated" selected>Mostra con etichetta stima</option><option value="show_all">Mostra sempre</option><option value="hide_if_estimated">Nascondi se non certi</option></select></div>
-      <div class="ai-config">Modifica il comportamento AI nel codice cercando <code>// AI_PROMPT_CONFIG</code></div>
+      <div class="ai-config">Modifica comportamento AI nel codice cercando <code>// AI_PROMPT_CONFIG</code></div>
     </div>
   </div>
   <div class="sg">
     <div class="sgt">🔑 API Keys</div>
     <div class="sr" style="flex-direction:column;align-items:flex-start;gap:0">
       <div style="width:100%;padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div><div class="slabel">OpenAI</div><div class="sdesc">gpt-4o · Vision + Chat</div></div><span id="openaiStatus" class="api-off">NON CONFIG.</span></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div><div class="slabel">OpenAI</div><div class="sdesc">GPT-4o mini · Vision + Chat · Consigliato</div></div><span id="openaiStatus" class="api-off">NON CONFIG.</span></div>
         <input class="fi fi-sm" id="openaiKey" type="password" placeholder="sk-..." oninput="updateKeyStatus('openai')">
         <div style="margin-top:6px;display:flex;gap:6px"><button class="btnp" style="padding:7px;font-size:12px;flex:none" onclick="saveKey('openai')">Salva</button><button class="btns" style="padding:7px;font-size:12px;flex:none" onclick="testKey('openai')">Testa</button></div>
       </div>
@@ -414,7 +454,7 @@ select.fi{cursor:pointer}
   </div>
   <div class="sg">
     <div class="sgt">🔌 API Ricette</div>
-    <div class="sr"><div class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="sinfo"><div class="slabel">TheMealDB</div><div class="sdesc">Gratuita · Nessuna chiave</div></div><span class="api-on">ATTIVA</span></div>
+    <div class="sr"><div class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div><div class="sinfo"><div class="slabel">Open Food Facts</div><div class="sdesc">Gratuita · Barcode · Prodotti italiani</div></div><span class="api-on">ATTIVA</span></div>
     <div class="sr"><div class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="22"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></div><div class="sinfo"><div class="slabel">Spoonacular</div><div class="sdesc" id="spoonDesc">Key non configurata</div></div><button class="sact" onclick="openModal('mSpoon')">Configura</button></div>
   </div>
   <div class="sg">
@@ -424,7 +464,7 @@ select.fi{cursor:pointer}
   </div>
   <div class="sg">
     <div class="sgt">ℹ️ App</div>
-    <div class="sr"><div class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="sinfo"><div class="slabel">La Mia Dispensa v8</div><div class="sdesc">localStorage · Multi-AI · Deploy ready</div></div></div>
+    <div class="sr"><div class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="sinfo"><div class="slabel">Pantrio v1.0</div><div class="sdesc">localStorage · Multi-AI · Barcode · Deploy ready</div></div></div>
   </div>
 </div>
 
@@ -436,7 +476,7 @@ select.fi{cursor:pointer}
   <button class="nb" onclick="switchTab('alimenti')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Alimenti</button>
   <button class="nb" onclick="switchTab('frigo')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="10" y1="14" x2="10" y2="17"/></svg>Frigo</button>
   <button class="nb" onclick="switchTab('dispensa')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>Dispensa</button>
-  <button class="nb plus" onclick="switchTab('scan')"><div class="nb-fab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Scansiona</button>
+  <button class="nb plus" onclick="switchTab('scan')"><div class="nb-fab"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>Fotografa</button>
   <button class="nb" onclick="switchTab('ricette')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="22"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>Ricette</button>
   <button class="nb" onclick="switchTab('spesa')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Spesa</button>
   <button class="nb" onclick="switchTab('settings')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Impost.</button>
@@ -447,7 +487,7 @@ select.fi{cursor:pointer}
 <div class="overlay" id="mQuickManual" onclick="closeOut(event,'mQuickManual')">
   <div class="modal">
     <div class="mhandle"></div>
-    <div class="mtitle">Aggiungi manualmente</div>
+    <div class="mtitle">Inserimento manuale</div>
     <div class="fg"><label class="fl">Nome prodotto</label><input class="fi" id="qmName" placeholder="es. Latte parzialmente scremato"></div>
     <button class="btnp" style="width:100%" onclick="quickManualAnalyze()">Aggiungi alimento</button>
     <div id="qmFlow" style="margin-top:14px"></div>
@@ -459,7 +499,6 @@ select.fi{cursor:pointer}
   <div class="modal">
     <div class="mhandle"></div>
     <div class="mtitle">Configura Spoonacular</div>
-    <p style="font-size:13px;color:var(--text3);margin-bottom:14px;line-height:1.6">Registrati su <strong>spoonacular.com/food-api</strong> per una key gratuita.</p>
     <div class="fg"><label class="fl">API Key</label><input class="fi" id="spoonKeyIn" type="password" placeholder="a1b2c3..."></div>
     <div class="btnrow"><button class="btnp" onclick="saveSpoonKey()">Salva</button><button class="btns" onclick="closeModal('mSpoon')">Annulla</button></div>
   </div>
@@ -468,52 +507,53 @@ select.fi{cursor:pointer}
   <div class="modal">
     <div class="mhandle"></div>
     <div class="mtitle">Aggiungi API personalizzata</div>
-    <div class="fg"><label class="fl">Nome fonte</label><input class="fi" id="cApiName" placeholder="es. MyRecipeDB"></div>
-    <div class="fg"><label class="fl">Endpoint URL</label><input class="fi" id="cApiUrl" placeholder="https://api.example.com/recipes"></div>
+    <div class="fg"><label class="fl">Nome fonte</label><input class="fi" id="cApiName"></div>
+    <div class="fg"><label class="fl">Endpoint URL</label><input class="fi" id="cApiUrl"></div>
     <div class="fg"><label class="fl">API Key (opzionale)</label><input class="fi" id="cApiKey" type="password"></div>
-    <div class="fg"><label class="fl">Note</label><input class="fi" id="cApiNote" placeholder="es. parametro ?ingredients=..."></div>
+    <div class="fg"><label class="fl">Note</label><input class="fi" id="cApiNote"></div>
     <div class="btnrow"><button class="btnp" onclick="saveCustomApi()">Aggiungi</button><button class="btns" onclick="closeModal('mCustom')">Annulla</button></div>
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════
-// AI_PROMPT_CONFIG
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// AI_PROMPT_CONFIG — modifica qui il comportamento AI
+// ═══════════════════════════════════════════════════════
 const AI_CONFIG={
   recognitionPrompt:`Sei un assistente nutrizionale italiano specializzato nel riconoscimento di alimenti.
 {CONFIDENCE}
 {NUTRI_INSTRUCTION}
+Analizza le immagini fornite (possono essere più foto dello stesso prodotto da angolazioni diverse).
 Rispondi SOLO con un oggetto JSON valido:
-{"recognized":true/false,"confidence":"high|medium|low","not_recognized_reason":"motivo se false, altrimenti null","name":"nome completo","brand":"marca o null","category":"una delle categorie disponibili","emoji":"emoji","type":"materia_prima|trasformato","suggestedLocation":"frigo|dispensa|entrambi","suggestedExpiry":"YYYY-MM-DD (oggi è {TODAY})","ingredients":[],"allergens":[],"kcal":null,"protein":null,"fat":null,"carbs":null,"fiber":null,"values_estimated":false,"notes":"nota breve"}`,
+{"recognized":true/false,"confidence":"high|medium|low","not_recognized_reason":null,"name":"nome completo","brand":"marca o null","category":"{CAT_LIST}","emoji":"emoji","type":"materia_prima|trasformato","suggestedLocation":"frigo|dispensa|entrambi","suggestedExpiry":"YYYY-MM-DD (oggi è {TODAY})","ingredients":[],"allergens":[],"kcal":null,"protein":null,"fat":null,"carbs":null,"fiber":null,"values_estimated":false,"avg_weight_per_unit":null,"notes":"nota breve"}
+Il campo avg_weight_per_unit è il peso medio in grammi per singola unità (es. 60 per un uovo, 180 per una mela). Inseriscilo solo per prodotti tipicamente venduti a unità.`,
   confidenceInstructions:{
-    strict:`IMPORTANTE: Se l'immagine non mostra chiaramente un alimento, o non sei sicuro al 100%, imposta "recognized":false e spiega in "not_recognized_reason". Non inventare mai dati.`,
-    normal:`Se non riesci a identificare con ragionevole certezza un alimento (immagine sfocata, non pertinente, non è cibo), imposta "recognized":false con breve spiegazione. Se hai un'idea plausibile, prova a riconoscerlo.`,
-    lenient:`Prova sempre a riconoscere qualcosa. Solo se l'immagine è completamente irriconoscibile imposta "recognized":false.`
+    strict:`IMPORTANTE: Se le immagini non mostrano chiaramente un alimento, o non sei sicuro al 100%, imposta "recognized":false. Non inventare mai dati.`,
+    normal:`Se non riesci a identificare con ragionevole certezza un alimento, imposta "recognized":false con breve spiegazione. Se hai un'idea plausibile, prova a riconoscerlo.`,
+    lenient:`Prova sempre a riconoscere qualcosa. Solo se è completamente irriconoscibile imposta "recognized":false.`
   },
   nutriInstructions:{
-    show_estimated:`Valori nutrizionali per 100g: inserisci valori reali se certi, altrimenti valori medi tipici con "values_estimated":true. Non lasciare null se puoi stimare.`,
-    show_all:`Inserisci sempre valori nutrizionali, anche stimati. Usa "values_estimated":false solo se sei certo.`,
-    hide_if_estimated:`Inserisci valori nutrizionali solo se certi (da confezione visibile). Altrimenti null e "values_estimated":false.`
+    show_estimated:`Valori nutrizionali per 100g: usa valori reali se certi, altrimenti valori medi tipici con "values_estimated":true.`,
+    show_all:`Inserisci sempre valori nutrizionali. Usa "values_estimated":false solo se certo.`,
+    hide_if_estimated:`Inserisci valori solo se certi da confezione visibile.`
   },
-  recipePrompt:`Sei uno chef professionista. Ingredienti disponibili: {INGREDIENTS}.{EXPIRING_NOTE}
-Crea 2 ricette creative. SOLO array JSON:
-[{"title":"nome","time":"tempo","difficulty":"Facile|Media|Difficile","ingredients_used":["..."],"expiring_used":[],"description":"descrizione 1-2 frasi","steps":["passo1","passo2","passo3","passo4"]}]`
+  recipePrompt:`Sei uno chef professionista americano. Ingredienti disponibili: {INGREDIENTS}.{EXPIRING_NOTE}
+Crea 2 ricette americane creative. SOLO array JSON:
+[{"title":"nome","time":"tempo","difficulty":"Easy|Medium|Hard","ingredients_used":["..."],"expiring_used":[],"description":"1-2 frasi appetitose","steps":["step1","step2","step3","step4"]}]`
 };
 
-// ═══════════════════════════════════════════════════════════
-// CATEGORIE ALIMENTI — elenco espanso
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// CATEGORIE
+// ═══════════════════════════════════════════════════════
 const CATEGORIE=[
-  // Prima riga (sempre visibili)
-  {id:'Tutti',label:'Tutti',emoji:'',primary:true},
+  {id:'Tutti',label:'Tutti',primary:true},
   {id:'Latticini',label:'Latticini',emoji:'🥛',primary:true},
   {id:'Carne',label:'Carne',emoji:'🥩',primary:true},
   {id:'Verdura',label:'Verdura',emoji:'🥦',primary:true},
   {id:'Frutta',label:'Frutta',emoji:'🍎',primary:true},
   {id:'Pane/Pasta/Cereali',label:'Pane & Pasta',emoji:'🍞',primary:true},
   {id:'Pesce',label:'Pesce',emoji:'🐟',primary:true},
-  // Espandibili
   {id:'Uova',label:'Uova',emoji:'🥚'},
   {id:'Legumi',label:'Legumi',emoji:'🫘'},
   {id:'Conserve',label:'Conserve',emoji:'🥫'},
@@ -535,18 +575,21 @@ const CATEGORIE=[
   {id:'Altro',label:'Altro',emoji:'📦'},
 ];
 
-let chipsExpanded=false;
-function buildChips(){
-  const container=document.getElementById('aliChips');
-  const toShow=chipsExpanded?CATEGORIE:CATEGORIE.filter(c=>c.primary);
-  container.innerHTML=toShow.map(c=>`<button class="chip${aliFilter===c.id?' active':''}" onclick="setAliFilter('${c.id}',this)">${c.emoji?c.emoji+' ':''}${c.label}</button>`).join('');
-  const btn=document.getElementById('chipsToggleBtn');
-  const lbl=document.getElementById('chipsToggleLabel');
-  const arrow=btn.querySelector('svg');
-  if(chipsExpanded){lbl.textContent='Nascondi categorie';arrow.style.transform='rotate(180deg)';}
-  else{lbl.textContent='Mostra tutte le categorie';arrow.style.transform='';}
-}
-function toggleAllChips(){chipsExpanded=!chipsExpanded;buildChips();}
+const CAT_LIST=CATEGORIE.filter(c=>c.id!=='Tutti').map(c=>c.id).join('|');
+
+// ═══════════════════════════════════════════════════════
+// AMERICAN CLASSIC RECIPES
+// ═══════════════════════════════════════════════════════
+const CLASSIC_RECIPES=[
+  {name:'Mac & Cheese',emoji:'🧀',local:{title:'Mac & Cheese',area:'American',ingredients:['Macaroni','Cheddar','Butter','Milk','Flour','Breadcrumbs'],instructions:['Cook macaroni al dente','Make roux with butter and flour','Add milk, stir until thick','Melt in cheese','Mix with pasta, top with breadcrumbs','Bake 180°C 20 min']}},
+  {name:'BBQ Ribs',emoji:'🥩',local:{title:'BBQ Pork Ribs',area:'American',ingredients:['Pork Ribs','BBQ Sauce','Brown Sugar','Paprika','Garlic Powder','Salt'],instructions:['Mix dry rub','Coat ribs well','Wrap in foil, bake 150°C 2.5h','Brush with BBQ sauce','Grill 10 min until caramelized']}},
+  {name:'Pancakes',emoji:'🥞',local:{title:'Fluffy Pancakes',area:'American',ingredients:['Flour','Eggs','Milk','Butter','Baking Powder','Sugar','Maple Syrup'],instructions:['Mix dry ingredients','Whisk wet ingredients','Combine — lumps OK!','Cook ¼ cup portions until bubbles form','Flip once','Serve with maple syrup']}},
+  {name:'Clam Chowder',emoji:'🍲',local:{title:'New England Clam Chowder',area:'American',ingredients:['Clams','Potatoes','Bacon','Onion','Heavy Cream','Butter','Flour'],instructions:['Cook bacon crispy','Sauté onion in fat','Add flour, stir 2 min','Add clam juice and potatoes','Simmer 15 min','Add clams and cream']}},
+  {name:'Beef Burger',emoji:'🍔',local:{title:'Classic Beef Burger',area:'American',ingredients:['Ground Beef','Bun','Cheddar','Lettuce','Tomato','Onion','Pickles','Ketchup'],instructions:['Season beef, form patties','Grill 4 min per side','Toast buns','Add cheese last minute','Assemble with toppings']}},
+  {name:'Buffalo Wings',emoji:'🍗',local:{title:'Buffalo Chicken Wings',area:'American',ingredients:['Chicken Wings','Hot Sauce','Butter','Garlic Powder','Celery','Blue Cheese'],instructions:['Bake wings 200°C 45 min','Melt butter with hot sauce','Toss wings in sauce','Serve with celery and blue cheese']}},
+  {name:'Lobster Roll',emoji:'🦞',local:{title:'New England Lobster Roll',area:'American',ingredients:['Lobster','Hot Dog Bun','Butter','Mayonnaise','Celery','Lemon','Chives'],instructions:['Cook and chop lobster','Mix with mayo, celery, lemon','Toast bun in butter','Fill with lobster mix','Garnish with chives']}},
+  {name:'Brownie',emoji:'🍫',local:{title:'Fudgy Chocolate Brownie',area:'American',ingredients:['Dark Chocolate','Butter','Sugar','Eggs','Flour','Cocoa Powder','Vanilla'],instructions:['Melt chocolate and butter','Whisk in sugar and eggs','Fold in flour and cocoa','Pour in greased pan','Bake 175°C 25 min','Cool before cutting']}},
+];
 
 // ICO SVG
 const ICO={
@@ -560,14 +603,15 @@ const ICO={
   clock:`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
   link:`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
   play:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`,
+  barcode:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9V5a2 2 0 0 1 2-2h4"/><path d="M15 3h4a2 2 0 0 1 2 2v4"/><path d="M21 15v4a2 2 0 0 1-2 2h-4"/><path d="M9 21H5a2 2 0 0 1-2-2v-4"/><line x1="7" y1="8" x2="7" y2="16"/><line x1="10" y1="8" x2="10" y2="16"/><line x1="13" y1="8" x2="13" y2="16"/><line x1="17" y1="8" x2="17" y2="16"/></svg>`,
 };
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // STORAGE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function lGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
 function lSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch{return false;}}
-const K_PROD='dispensa_v8_instances',K_FOOD='dispensa_v8_alimenti',K_SET='dispensa_v8_settings';
+const K_PROD='pantrio_v1_instances',K_FOOD='pantrio_v1_alimenti',K_SET='pantrio_v1_settings';
 let instances=[],alimenti=[];
 let settings={spoonKey:'',customApis:[],engineRecognition:'openai',engineRecipes:'openai',keys:{openai:'',anthropic:'',gemini:''},aiConfidence:'normal',aiNutri:'show_estimated'};
 
@@ -576,19 +620,25 @@ function loadAll(){
   const p=lGet(K_PROD),f=lGet(K_FOOD),s=lGet(K_SET);
   instances=Array.isArray(p)?p:[];alimenti=Array.isArray(f)?f:[];
   if(s){settings={...settings,...s};if(!settings.keys)settings.keys={openai:'',anthropic:'',gemini:''};}
-  refreshAll();updateSettingsUI();loadClassicRecipes();buildChips();
+  refreshAll();updateSettingsUI();loadClassicRecipes();buildChips();checkApiKeyWarning();
   setSS('Pronto · '+now());
 }
 function saveInstances(){lSet(K_PROD,instances);setSS('Salvato · '+now());}
 function saveAlimenti(){lSet(K_FOOD,alimenti);}
-function saveSettings(){lSet(K_SET,settings);}
+function saveSettings(){lSet(K_SET,settings);checkApiKeyWarning();}
 function syncData(){loadAll();}
 function setSS(m){document.getElementById('syncStatus').textContent=m;}
 function now(){return new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});}
 
-// ═══════════════════════════════════════════════════════════
+// API KEY WARNING
+function checkApiKeyWarning(){
+  const hasKey=settings.keys.openai||settings.keys.anthropic||settings.keys.gemini;
+  document.getElementById('apiWarnBanner').style.display=hasKey?'none':'flex';
+}
+
+// ═══════════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function days(d){if(!d)return 999;const e=new Date(d),t=new Date();e.setHours(0,0,0,0);t.setHours(0,0,0,0);return Math.round((e-t)/86400000);}
 function status(d){
   if(d<0)  return{cls:'b-e',lbl:'Scaduto', key:'scaduti',bar:'#B4B2A9',pct:0};
@@ -603,71 +653,196 @@ function foodById(id){return alimenti.find(a=>a.id===id)||{};}
 function catColor(cat){return catColorMap[cat]||'#8B5CF6';}
 function getCatBg(cat){return cmap[cat]||'#EEEDF9';}
 
-// ═══════════════════════════════════════════════════════════
-// CLASSIC RECIPES
-// ═══════════════════════════════════════════════════════════
-const CLASSIC_RECIPES=[
-  {id:'52772',name:'Spaghetti Carbonara',emoji:'🍝',origin:'🇮🇹'},
-  {id:'52768',name:"Penne All'Arrabbiata",emoji:'🍝',origin:'🇮🇹'},
-  {id:'52837',name:'Lasagna',emoji:'🫕',origin:'🇮🇹'},
-  {id:'52835',name:'Tiramisù',emoji:'🍮',origin:'🇮🇹'},
-  {id:'52846',name:'Pizza Margherita',emoji:'🍕',origin:'🇮🇹'},
-  {id:'',name:'Mac & Cheese',emoji:'🧀',origin:'🇺🇸',local:{title:'Mac & Cheese',area:'American',category:'Pasta',ingredients:['Macaroni','Cheddar Cheese','Butter','Milk','Flour','Salt','Pepper','Breadcrumbs'],instructions:['Cook macaroni al dente, drain','Make roux: melt butter, whisk in flour 2 min','Add milk gradually, stir until thick','Add cheese, stir until melted','Mix with pasta, top with breadcrumbs','Bake 180°C for 20 min until golden']}},
-  {id:'',name:'BBQ Ribs',emoji:'🥩',origin:'🇺🇸',local:{title:'BBQ Pork Ribs',area:'American',category:'BBQ',ingredients:['Pork Ribs','BBQ Sauce','Brown Sugar','Paprika','Garlic Powder','Salt','Pepper'],instructions:['Mix dry rub: sugar, paprika, garlic powder, salt','Coat ribs with dry rub','Wrap in foil, bake 150°C for 2.5 hours','Unwrap, brush with BBQ sauce','Grill 10 min until caramelized']}},
-  {id:'',name:'Pancakes',emoji:'🥞',origin:'🇺🇸',local:{title:'Fluffy American Pancakes',area:'American',category:'Breakfast',ingredients:['Flour','Eggs','Milk','Butter','Baking Powder','Sugar','Salt','Maple Syrup'],instructions:['Mix dry: flour, baking powder, sugar, salt','Whisk wet: eggs, milk, melted butter','Combine — lumps OK!','Heat pan, pour ¼ cup batter','Cook until bubbles form, flip once','Serve with maple syrup']}},
-  {id:'',name:'Clam Chowder',emoji:'🍲',origin:'🇺🇸',local:{title:'New England Clam Chowder',area:'American',category:'Soup',ingredients:['Clams','Potatoes','Bacon','Onion','Celery','Heavy Cream','Butter','Flour'],instructions:['Cook bacon crispy, keep fat','Sauté onion and celery in bacon fat','Add flour, stir 2 min','Add clam juice and potatoes','Simmer 15 min until tender','Add clams and cream, heat gently']}},
-];
+// CHIPS
+let chipsExpanded=false;
+let aliFilter='Tutti';
+function buildChips(){
+  const container=document.getElementById('aliChips');
+  const toShow=chipsExpanded?CATEGORIE:CATEGORIE.filter(c=>c.primary);
+  container.innerHTML=toShow.map(c=>`<button class="chip${aliFilter===c.id?' active':''}" onclick="setAliFilter('${c.id}',this)">${c.emoji?c.emoji+' ':''}${c.label}</button>`).join('');
+  const lbl=document.getElementById('chipsToggleLabel');
+  const arrow=document.querySelector('#chipsToggleBtn svg');
+  if(chipsExpanded){lbl.textContent='Nascondi categorie';if(arrow)arrow.style.transform='rotate(180deg)';}
+  else{lbl.textContent='Mostra tutte le categorie';if(arrow)arrow.style.transform='';}
+}
+function toggleAllChips(){chipsExpanded=!chipsExpanded;buildChips();}
+function setAliFilter(v,el){aliFilter=v;buildChips();renderAlimenti();}
 
-let classicSrcFilter='all';
-function setSrcTab(v,el){classicSrcFilter=v;document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadClassicRecipes();}
+// ═══════════════════════════════════════════════════════
+// BARCODE SCANNER (QuaggaJS + Open Food Facts)
+// ═══════════════════════════════════════════════════════
+let barcodeActive=false;
+function toggleBarcode(){
+  if(barcodeActive){stopBarcode();}else{startBarcode();}
+}
+function startBarcode(){
+  const wrap=document.getElementById('barcodeVideoWrap');
+  const btn=document.getElementById('barcodeBtn');
+  const status=document.getElementById('barcodeStatus');
+  wrap.style.display='block';
+  btn.textContent='⏹ Ferma scansione';
+  status.textContent='In attesa di barcode...';
+  barcodeActive=true;
+  if(typeof Quagga==='undefined'){status.textContent='Libreria barcode non disponibile (richiede deploy su HTTPS).';stopBarcode();return;}
+  Quagga.init({
+    inputStream:{name:'Live',type:'LiveStream',target:document.getElementById('barcodeVideo'),constraints:{facingMode:'environment'}},
+    decoder:{readers:['ean_reader','ean_8_reader','upc_reader','upc_e_reader','code_128_reader']},
+    locate:true
+  },err=>{
+    if(err){status.textContent='Fotocamera non disponibile. Usa la modalità foto.';stopBarcode();return;}
+    Quagga.start();
+    Quagga.onDetected(result=>{
+      const code=result.codeResult.code;
+      if(code){stopBarcode();lookupBarcode(code);}
+    });
+  });
+}
+function stopBarcode(){
+  barcodeActive=false;
+  document.getElementById('barcodeVideoWrap').style.display='none';
+  document.getElementById('barcodeBtn').textContent='▶ Avvia scansione barcode';
+  if(typeof Quagga!=='undefined')try{Quagga.stop();}catch{}
+}
+async function lookupBarcode(code){
+  const flow=document.getElementById('scanFlow');
+  flow.innerHTML=`<div class="aibox"><span class="thinking">•</span> Barcode ${code} — cerco in Open Food Facts<span class="ld"></span></div>`;
+  try{
+    const res=await fetch(`https://world.openfoodfacts.org/api/v0/product/${code}.json`);
+    const d=await res.json();
+    if(d.status===1&&d.product){
+      const p=d.product;
+      const nutriments=p.nutriments||{};
+      const info={
+        recognized:true,confidence:'high',
+        name:p.product_name_it||p.product_name||p.brands||'Prodotto sconosciuto',
+        brand:p.brands||null,
+        category:mapOFFCategory(p.categories_tags||[]),
+        emoji:getEmojiForCategory(mapOFFCategory(p.categories_tags||[])),
+        type:'trasformato',
+        suggestedLocation:getSuggestedLocation(p.categories_tags||[]),
+        suggestedExpiry:'',
+        ingredients:(p.ingredients_text_it||p.ingredients_text||'').split(',').map(s=>s.trim()).filter(Boolean).slice(0,10),
+        allergens:(p.allergens_tags||[]).map(a=>a.replace('en:','').replace('it:','')),
+        kcal:Math.round(nutriments['energy-kcal_100g'])||null,
+        protein:Math.round(nutriments.proteins_100g)||null,
+        fat:Math.round(nutriments.fat_100g)||null,
+        carbs:Math.round(nutriments.carbohydrates_100g)||null,
+        fiber:Math.round(nutriments.fiber_100g)||null,
+        values_estimated:false,
+        avg_weight_per_unit:null,
+        notes:`Trovato su Open Food Facts (barcode: ${code})`
+      };
+      info.color=getCatBg(info.category);
+      flow.innerHTML=`<div class="aibox success">✅ Prodotto trovato! ${info.name}${info.brand?' · '+info.brand:''}</div>`;
+      pendingFood=info;
+      pendingInst={location:info.suggestedLocation,expiry:'',qty:1,qtyUnit:'unità'};
+      const dup=alimenti.find(a=>a.name.toLowerCase()===info.name.toLowerCase());
+      if(dup){showDuplicateChoice(dup,'scanFlow');}else{showConfirmForm('scanFlow');}
+    }else{
+      flow.innerHTML=`<div class="aibox warn">⚠️ Barcode non trovato nel database. Provo con l'AI<span class="ld"></span></div>`;
+      setTimeout(()=>analyzeProductWithText(`Barcode: ${code}`),500);
+    }
+  }catch{flow.innerHTML=`<div class="aibox error">Errore nella ricerca barcode. Riprova.</div>`;}
+}
+
+function mapOFFCategory(tags){
+  const t=tags.join(' ').toLowerCase();
+  if(t.includes('dairy')||t.includes('lait')||t.includes('latte'))return'Latticini';
+  if(t.includes('meat')||t.includes('carne')||t.includes('viande'))return'Carne';
+  if(t.includes('fish')||t.includes('pesce')||t.includes('poisson'))return'Pesce';
+  if(t.includes('vegetable')||t.includes('verdur'))return'Verdura';
+  if(t.includes('fruit')||t.includes('frutta')||t.includes('fruit'))return'Frutta';
+  if(t.includes('pasta')||t.includes('bread')||t.includes('cereal')||t.includes('pane'))return'Pane/Pasta/Cereali';
+  if(t.includes('beverage')||t.includes('drink')||t.includes('bevande'))return'Bevande';
+  if(t.includes('frozen')||t.includes('surgel'))return'Surgelati';
+  if(t.includes('sauce')||t.includes('condiment'))return'Condimenti';
+  if(t.includes('egg')||t.includes('uova'))return'Uova';
+  if(t.includes('legume')||t.includes('bean')||t.includes('legumi'))return'Legumi';
+  if(t.includes('sweet')||t.includes('dolci')||t.includes('chocolate'))return'Dolci';
+  if(t.includes('snack'))return'Snack';
+  if(t.includes('cheese')||t.includes('formaggio'))return'Formaggi';
+  return'Conserve';
+}
+function getSuggestedLocation(tags){
+  const t=tags.join(' ').toLowerCase();
+  if(t.includes('dairy')||t.includes('meat')||t.includes('fish')||t.includes('fresh'))return'frigo';
+  if(t.includes('frozen'))return'surgelati';
+  return'dispensa';
+}
+function getEmojiForCategory(cat){const c=CATEGORIE.find(x=>x.id===cat);return c?.emoji||'📦';}
+
+// ═══════════════════════════════════════════════════════
+// FOTO MULTIPLA
+// ═══════════════════════════════════════════════════════
+let uploadedPhotos=[]; // array di base64
+function triggerUpload(){document.getElementById('imgInput').click();}
+function handleImg(e){
+  const files=Array.from(e.target.files||[]);
+  files.forEach(file=>{
+    const r=new FileReader();
+    r.onload=ev=>{
+      uploadedPhotos.push(ev.target.result.split(',')[1]);
+      renderPhotoGrid();
+    };
+    r.readAsDataURL(file);
+  });
+  document.getElementById('imgInput').value='';
+}
+function removePhoto(idx){uploadedPhotos.splice(idx,1);renderPhotoGrid();}
+function renderPhotoGrid(){
+  const grid=document.getElementById('photoGrid');
+  const MAX=5;
+  grid.innerHTML=uploadedPhotos.map((b64,i)=>`
+    <div class="photo-thumb">
+      <img src="data:image/jpeg;base64,${b64}" alt="foto ${i+1}">
+      <button class="remove-photo" onclick="removePhoto(${i})">${ICO.close}</button>
+    </div>`).join('');
+  const countLabel=document.getElementById('photoCountLabel');
+  countLabel.textContent=uploadedPhotos.length>0?`(${uploadedPhotos.length}/${MAX})`:'';
+  document.getElementById('addPhotoBtn').style.display=uploadedPhotos.length>=MAX?'none':'flex';
+}
+
+// ═══════════════════════════════════════════════════════
+// CLASSIC RECIPES RENDER
+// ═══════════════════════════════════════════════════════
 function loadClassicRecipes(){
-  let list=CLASSIC_RECIPES;
-  if(classicSrcFilter==='italian')list=CLASSIC_RECIPES.filter(r=>r.origin==='🇮🇹');
-  if(classicSrcFilter==='american')list=CLASSIC_RECIPES.filter(r=>r.origin==='🇺🇸');
-  if(classicSrcFilter==='ai'){document.getElementById('classicRecipes').innerHTML='';return;}
-  document.getElementById('classicRecipes').innerHTML=list.map(r=>`<div class="mealdb-item" onclick="openClassicRecipe('${r.id}','${encodeURIComponent(JSON.stringify(r))}')"><div class="mi-emoji">${r.emoji}</div><div class="mi-name">${r.name}</div><div class="mi-origin">${r.origin}</div></div>`).join('');
+  document.getElementById('classicRecipes').innerHTML=CLASSIC_RECIPES.map(r=>`
+    <div class="mealdb-item" onclick="openLocalRecipeModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+      <div class="mi-emoji">${r.emoji}</div>
+      <div class="mi-name">${r.name}</div>
+      <div class="mi-origin">🇺🇸</div>
+    </div>`).join('');
 }
-async function openClassicRecipe(mealdbId,enc){
+function openLocalRecipeModal(r){
   openModal('mMealDetail');
-  const r=JSON.parse(decodeURIComponent(enc));
-  document.getElementById('mMealDetailContent').innerHTML=`<div class="mhandle"></div><div class="aibox"><span class="thinking">•</span> Caricamento<span class="ld"></span></div>`;
-  if(mealdbId&&!r.local){
-    try{const res=await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealdbId}`);const d=await res.json();const meal=d.meals?.[0];if(meal){renderMealModal(meal,r.emoji);return;}}catch{}
-  }
-  renderLocalRecipe(r.local||{title:r.name,area:r.origin,ingredients:[],instructions:[]},r.emoji);
-}
-function renderMealModal(meal,emoji){
-  const ings=[];for(let i=1;i<=20;i++){const ing=meal[`strIngredient${i}`];const meas=meal[`strMeasure${i}`];if(ing&&ing.trim())ings.push(`${meas?meas.trim()+' ':''}${ing.trim()}`);}
-  const steps=(meal.strInstructions||'').split(/\r?\n/).filter(s=>s.trim()).slice(0,10);
-  document.getElementById('mMealDetailContent').innerHTML=`<div class="mhandle"></div>
-    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px"><div style="font-size:38px;line-height:1">${emoji}</div><div><div style="font-size:19px;font-weight:800">${meal.strMeal}</div><div style="font-size:13px;color:var(--text3);margin-top:3px">${meal.strArea||''} · ${meal.strCategory||''}</div></div></div>
-    <div class="detail-section"><h3>Ingredienti</h3><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${ings.map(i=>`<span class="tag">${i}</span>`).join('')}</div></div>
-    <div class="detail-section"><h3>Preparazione</h3><ol style="font-size:13px;color:var(--text2);padding-left:18px;line-height:1.9;margin-top:6px">${steps.map(s=>`<li style="margin-bottom:4px">${s}</li>`).join('')}</ol></div>
-    <div class="btnrow" style="margin-top:16px">
-      ${meal.strYoutube?`<a href="${meal.strYoutube}" target="_blank" class="btnp" style="text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px">${ICO.play} Video</a>`:''}
-      <a href="https://www.themealdb.com/meal/${meal.idMeal}" target="_blank" class="btns" style="text-decoration:none;text-align:center">MealDB ${ICO.link}</a>
-      <button class="btns" onclick="closeModal('mMealDetail')">Chiudi</button>
-    </div>`;
-}
-function renderLocalRecipe(data,emoji){
-  document.getElementById('mMealDetailContent').innerHTML=`<div class="mhandle"></div>
-    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px"><div style="font-size:38px;line-height:1">${emoji}</div><div><div style="font-size:19px;font-weight:800">${data.title}</div><div style="font-size:13px;color:var(--text3);margin-top:3px">${data.area||''} ${data.category?'· '+data.category:''}</div></div></div>
-    <div class="detail-section"><h3>Ingredienti</h3><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${(data.ingredients||[]).map(i=>`<span class="tag">${i}</span>`).join('')}</div></div>
-    <div class="detail-section"><h3>Preparazione</h3><ol style="font-size:13px;color:var(--text2);padding-left:18px;line-height:1.9;margin-top:6px">${(data.instructions||[]).map(s=>`<li style="margin-bottom:4px">${s}</li>`).join('')}</ol></div>
+  document.getElementById('mMealDetailContent').innerHTML=`
+    <div class="mhandle"></div>
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
+      <div style="font-size:38px;line-height:1">${r.emoji}</div>
+      <div><div style="font-size:19px;font-weight:800">${r.local.title}</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px">🇺🇸 ${r.local.area||'American'}</div></div>
+    </div>
+    <div class="detail-section"><h3>Ingredienti</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">${(r.local.ingredients||[]).map(i=>`<span class="tag">${i}</span>`).join('')}</div>
+    </div>
+    <div class="detail-section"><h3>Preparazione</h3>
+      <ol style="font-size:13px;color:var(--text2);padding-left:18px;line-height:1.9;margin-top:6px">${(r.local.instructions||[]).map(s=>`<li style="margin-bottom:4px">${s}</li>`).join('')}</ol>
+    </div>
     <div class="btnrow" style="margin-top:16px"><button class="btns" onclick="closeModal('mMealDetail')">Chiudi</button></div>`;
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // CARDS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function instCard(ins){
   const food=foodById(ins.foodId);const d=days(ins.expiry),s=status(d);const isF=ins.location==='frigo';
+  const qtyLabel=ins.qtyUnit==='grammi'?`${ins.qty}g`:`×${ins.qty}${ins.avgWeight?` (~${Math.round(ins.qty*ins.avgWeight)}g)`:''}`;
   return `<div class="pc" onclick="openEditInstance('${ins.id}')">
     <div class="pi" style="background:${food.color||'#EEEDF9'}">${food.emoji||'📦'}</div>
     <div class="pinfo">
       <div class="pname">${food.name||'?'}</div>
       <div class="pmeta"><span class="ploc ${isF?'ploc-f':'ploc-d'}">${isF?ICO.fridge:ICO.shelf} ${isF?'Frigo':'Dispensa'}</span><span>·</span><span>${food.category||''}</span></div>
-      ${ins.qty>1?`<div class="pqty">×${ins.qty}</div>`:''}
+      <div class="pqty">${qtyLabel}</div>
       <div class="pbar"><div class="pbf" style="width:${s.pct}%;background:${s.bar}"></div></div>
     </div>
     <span class="pbadge ${s.cls}">${s.lbl}</span>
@@ -681,7 +856,7 @@ function aliCard(f){
     <div class="nutri-cell"><div class="nutri-val">${f.kcal||'—'}</div><div class="nutri-lbl">kcal${f.values_estimated?'*':''}</div></div>
     <div class="nutri-cell"><div class="nutri-val">${f.protein||'—'}g</div><div class="nutri-lbl">proteine${f.values_estimated?'*':''}</div></div>
     <div class="nutri-cell"><div class="nutri-val">${f.fat||'—'}g</div><div class="nutri-lbl">grassi${f.values_estimated?'*':''}</div></div>
-    <div class="nutri-cell"><div class="nutri-val">${f.carbs||'—'}g</div><div class="nutri-lbl">carboidrati${f.values_estimated?'*':''}</div></div>
+    <div class="nutri-cell"><div class="nutri-val">${f.carbs||'—'}g</div><div class="nutri-lbl">carb.${f.values_estimated?'*':''}</div></div>
   </div>${f.values_estimated?'<div style="font-size:10px;color:var(--warn);margin-top:4px;font-weight:600">* Valori medi stimati</div>':''}`:'' ;
   return `<div class="ac" onclick="openEditFood('${f.id}')">
     <div class="ac-head">
@@ -700,45 +875,34 @@ function aliCard(f){
   </div>`;
 }
 
-// ═══════════════════════════════════════════════════════════
-// EDIT FOOD (modifica scheda alimento)
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// EDIT FOOD
+// ═══════════════════════════════════════════════════════
 function openEditFood(fid){
   const f=foodById(fid);
   const catOptions=CATEGORIE.filter(c=>c.id!=='Tutti').map(c=>`<option value="${c.id}" ${f.category===c.id?'selected':''}>${c.emoji||''} ${c.label}</option>`).join('');
   document.getElementById('mEditFoodContent').innerHTML=`
     <div class="mhandle"></div>
     <div class="edit-banner">${ICO.edit} Modifica scheda alimento</div>
-    <div class="mtitle" style="margin-bottom:10px">${f.emoji||'📦'} ${f.name}</div>
     <div class="fg"><label class="fl">Nome</label><input class="fi" id="ef_name" value="${f.name}"></div>
-    <div class="fg"><label class="fl">Marca</label><input class="fi" id="ef_brand" value="${f.brand||''}" placeholder="es. Barilla"></div>
+    <div class="fg"><label class="fl">Marca</label><input class="fi" id="ef_brand" value="${f.brand||''}"></div>
     <div class="fg"><label class="fl">Categoria</label><select class="fi" id="ef_category">${catOptions}</select></div>
     <div class="fg"><label class="fl">Tipo</label><select class="fi" id="ef_type"><option value="materia_prima" ${f.type==='materia_prima'?'selected':''}>Materia prima</option><option value="trasformato" ${f.type==='trasformato'?'selected':''}>Trasformato</option></select></div>
-    <div class="fg"><label class="fl">Emoji</label><input class="fi" id="ef_emoji" value="${f.emoji||''}" placeholder="🥛" maxlength="4"></div>
+    <div class="fg"><label class="fl">Emoji</label><input class="fi" id="ef_emoji" value="${f.emoji||''}" maxlength="4"></div>
     <div class="fg"><label class="fl">Valori nutrizionali (per 100g)</label>
-      <div class="row4">
-        <div class="nutri-input-wrap"><label class="nutri-input-label">kcal</label><input class="nutri-input" type="number" id="ef_kcal" value="${f.kcal||''}" placeholder="—"></div>
-        <div class="nutri-input-wrap"><label class="nutri-input-label">proteine g</label><input class="nutri-input" type="number" id="ef_protein" value="${f.protein||''}" placeholder="—"></div>
-        <div class="nutri-input-wrap"><label class="nutri-input-label">grassi g</label><input class="nutri-input" type="number" id="ef_fat" value="${f.fat||''}" placeholder="—"></div>
-        <div class="nutri-input-wrap"><label class="nutri-input-label">carb. g</label><input class="nutri-input" type="number" id="ef_carbs" value="${f.carbs||''}" placeholder="—"></div>
-      </div>
-      <div class="row3">
-        <div class="nutri-input-wrap"><label class="nutri-input-label">fibre g</label><input class="nutri-input" type="number" id="ef_fiber" value="${f.fiber||''}" placeholder="—"></div>
-      </div>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);margin-top:4px;cursor:pointer">
-        <input type="checkbox" id="ef_estimated" ${f.values_estimated?'checked':''}> Valori stimati (media tipica)
-      </label>
+      <div class="row4"><div class="nutri-input-wrap"><label class="nutri-input-label">kcal</label><input class="nutri-input" type="number" id="ef_kcal" value="${f.kcal||''}"></div><div class="nutri-input-wrap"><label class="nutri-input-label">proteine g</label><input class="nutri-input" type="number" id="ef_protein" value="${f.protein||''}"></div><div class="nutri-input-wrap"><label class="nutri-input-label">grassi g</label><input class="nutri-input" type="number" id="ef_fat" value="${f.fat||''}"></div><div class="nutri-input-wrap"><label class="nutri-input-label">carb. g</label><input class="nutri-input" type="number" id="ef_carbs" value="${f.carbs||''}"></div></div>
+      <div class="row3"><div class="nutri-input-wrap"><label class="nutri-input-label">fibre g</label><input class="nutri-input" type="number" id="ef_fiber" value="${f.fiber||''}"></div></div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);margin-top:4px;cursor:pointer"><input type="checkbox" id="ef_estimated" ${f.values_estimated?'checked':''}> Valori stimati</label>
     </div>
-    <div class="fg"><label class="fl">Allergeni (separati da virgola)</label><input class="fi" id="ef_allergens" value="${(f.allergens||[]).join(', ')}" placeholder="es. glutine, latte"></div>
-    <div class="fg"><label class="fl">Note</label><input class="fi" id="ef_notes" value="${f.notes||''}" placeholder="Nota utile"></div>
+    <div class="fg"><label class="fl">Allergeni (virgola separati)</label><input class="fi" id="ef_allergens" value="${(f.allergens||[]).join(', ')}"></div>
+    <div class="fg"><label class="fl">Note</label><input class="fi" id="ef_notes" value="${f.notes||''}"></div>
     <div class="btnrow">
-      <button class="btnp" onclick="saveEditFood('${fid}')">💾 Salva modifiche</button>
+      <button class="btnp" onclick="saveEditFood('${fid}')">💾 Salva</button>
       <button class="btns btnd" onclick="deleteFoodConfirm('${fid}')" style="flex:none;padding:13px 16px">${ICO.trash}</button>
       <button class="btns" onclick="closeModal('mEditFood')" style="flex:none;padding:13px 16px">✕</button>
     </div>`;
   openModal('mEditFood');
 }
-
 function saveEditFood(fid){
   const f=alimenti.find(a=>a.id===fid);if(!f)return;
   f.name=document.getElementById('ef_name').value.trim()||f.name;
@@ -758,52 +922,60 @@ function saveEditFood(fid){
   saveAlimenti();closeModal('mEditFood');refreshAll();
 }
 
-// ═══════════════════════════════════════════════════════════
-// EDIT INSTANCE (modifica istanza frigo/dispensa)
-// ═══════════════════════════════════════════════════════════
+// EDIT INSTANCE
 function openEditInstance(insId){
   const ins=instances.find(i=>i.id===insId);if(!ins)return;
   const food=foodById(ins.foodId);
+  const isGrammi=ins.qtyUnit==='grammi';
   document.getElementById('mEditFoodContent').innerHTML=`
     <div class="mhandle"></div>
-    <div class="edit-banner">${ICO.edit} Modifica prodotto in dispensa</div>
+    <div class="edit-banner">${ICO.edit} Modifica prodotto</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-      <div style="width:44px;height:44px;border-radius:12px;background:${food.color||'#EEEDF9'};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${food.emoji||'📦'}</div>
+      <div style="width:44px;height:44px;border-radius:12px;background:${food.color||'#EEEDF9'};display:flex;align-items:center;justify-content:center;font-size:22px">${food.emoji||'📦'}</div>
       <div><div style="font-size:16px;font-weight:700">${food.name}</div><div style="font-size:12px;color:var(--text3)">${food.category||''}</div></div>
     </div>
     <div class="fg"><label class="fl">Seleziona dove lo conservi</label><select class="fi" id="ei_loc"><option value="frigo" ${ins.location==='frigo'?'selected':''}>❄️ Frigo</option><option value="dispensa" ${ins.location==='dispensa'?'selected':''}>🗄️ Dispensa</option></select></div>
     <div class="row2">
       <div class="fg"><label class="fl">Data scadenza</label><input class="fi fi-sm" type="date" id="ei_exp" value="${ins.expiry||''}"></div>
-      <div class="fg"><label class="fl">Quantità</label><input class="fi fi-sm" type="number" id="ei_qty" value="${ins.qty||1}" min="1" max="99"></div>
+      <div class="fg"><label class="fl">Quantità</label>
+        <div class="qty-wrap">
+          <input class="fi fi-sm" type="number" id="ei_qty" value="${ins.qty||1}" min="1">
+          <div class="qty-unit-toggle">
+            <button class="qty-unit-btn${!isGrammi?' active':''}" id="ei_unit_u" onclick="setQtyUnit('ei','unità')">pz</button>
+            <button class="qty-unit-btn${isGrammi?' active':''}" id="ei_unit_g" onclick="setQtyUnit('ei','grammi')">g</button>
+          </div>
+        </div>
+        <input type="hidden" id="ei_qtyUnit" value="${ins.qtyUnit||'unità'}">
+        ${food.avg_weight_per_unit&&!isGrammi?`<div class="weight-estimate">≈ ${Math.round((ins.qty||1)*food.avg_weight_per_unit)}g totali (${food.avg_weight_per_unit}g/pz stimati)</div>`:'<div class="weight-estimate" id="ei_weightEst"></div>'}
+      </div>
     </div>
     <div class="btnrow">
-      <button class="btnp" onclick="saveEditInstance('${insId}')">💾 Salva modifiche</button>
-      <button class="btns" onclick="openEditFood('${ins.foodId}')" style="font-size:12px">✏️ Modifica scheda</button>
+      <button class="btnp" onclick="saveEditInstance('${insId}')">💾 Salva</button>
+      <button class="btns" onclick="openEditFood('${ins.foodId}')" style="font-size:12px">✏️ Scheda</button>
       <button class="btns btnd" onclick="deleteInstance('${insId}');closeModal('mEditFood')" style="flex:none;padding:13px 16px">${ICO.trash}</button>
     </div>`;
   openModal('mEditFood');
 }
-
+function setQtyUnit(prefix,unit){
+  document.getElementById(`${prefix}_qtyUnit`).value=unit;
+  document.getElementById(`${prefix}_unit_u`).classList.toggle('active',unit==='unità');
+  document.getElementById(`${prefix}_unit_g`).classList.toggle('active',unit==='grammi');
+}
 function saveEditInstance(insId){
   const ins=instances.find(i=>i.id===insId);if(!ins)return;
   const exp=document.getElementById('ei_exp').value;
   if(!exp){alert('Inserisci la data di scadenza');return;}
   ins.location=document.getElementById('ei_loc').value;
   ins.expiry=exp;
-  ins.qty=parseInt(document.getElementById('ei_qty').value)||1;
+  ins.qty=parseFloat(document.getElementById('ei_qty').value)||1;
+  ins.qtyUnit=document.getElementById('ei_qtyUnit').value||'unità';
   saveInstances();closeModal('mEditFood');refreshAll();
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // FILTERS & RENDER
-// ═══════════════════════════════════════════════════════════
-let aliFilter='Tutti',locFilters={frigo:'tutti',dispensa:'tutti'};
-
-function setAliFilter(v,el){
-  aliFilter=v;
-  buildChips(); // rigenera con active corretto
-  renderAlimenti();
-}
+// ═══════════════════════════════════════════════════════
+let locFilters={frigo:'tutti',dispensa:'tutti'};
 function setLocFilter(loc,v,el){locFilters[loc]=v;document.querySelectorAll(`#${loc}Chips .chip`).forEach(c=>c.classList.remove('active'));el.classList.add('active');renderLoc(loc);}
 
 function renderStats(){
@@ -834,20 +1006,12 @@ function renderAlimenti(){
     if(q&&!f.name.toLowerCase().includes(q))return false;
     return true;
   };
-  const validFoods=alimenti.filter(f=>{
-    if(!filterFn(f))return false;
-    const insts=instances.filter(i=>i.foodId===f.id);
-    return !insts.length||insts.some(i=>days(i.expiry)>=0);
-  });
-  const scadutiFoods=alimenti.filter(f=>{
-    if(!filterFn(f))return false;
-    const insts=instances.filter(i=>i.foodId===f.id);
-    return insts.length>0&&insts.every(i=>days(i.expiry)<0);
-  });
+  const validFoods=alimenti.filter(f=>{if(!filterFn(f))return false;const insts=instances.filter(i=>i.foodId===f.id);return !insts.length||insts.some(i=>days(i.expiry)>=0);});
+  const scadutiFoods=alimenti.filter(f=>{if(!filterFn(f))return false;const insts=instances.filter(i=>i.foodId===f.id);return insts.length>0&&insts.every(i=>days(i.expiry)<0);});
   const grouped={};
   validFoods.forEach(f=>{const cat=f.category||'Altro';if(!grouped[cat])grouped[cat]=[];grouped[cat].push(f);});
   let html='';
-  if(!validFoods.length)html=`<div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><p>Nessun alimento nel database.<br>Aggiungilo dalla scheda Scansiona!</p></div>`;
+  if(!validFoods.length)html=`<div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div><p>Nessun alimento nel database.<br>Aggiungilo dalla scheda Fotografa!</p></div>`;
   Object.keys(grouped).sort().forEach(cat=>{
     html+=`<div class="cat-label" style="color:${catColor(cat)}">${cat}</div>`;
     html+=grouped[cat].map(aliCard).join('');
@@ -866,18 +1030,18 @@ function renderLoc(loc){
 }
 function refreshAll(){renderStats();renderAlerts();renderHome();renderAlimenti();renderLoc('frigo');renderLoc('dispensa');}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // DELETE
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function deleteInstance(id){instances=instances.filter(i=>i.id!==id);saveInstances();refreshAll();}
 function deleteFoodConfirm(fid){const f=foodById(fid),cnt=instances.filter(i=>i.foodId===fid).length;if(!confirm(cnt>0?`Eliminare "${f.name}"? Verranno rimosse anche ${cnt} istanze.`:`Eliminare "${f.name}" dal database?`))return;deleteFood(fid);}
 function deleteFood(fid){alimenti=alimenti.filter(a=>a.id!==fid);instances=instances.filter(i=>i.foodId!==fid);saveAlimenti();saveInstances();closeModal('mEditFood');refreshAll();}
 function deleteAllScaduti(){if(!confirm('Eliminare tutti gli alimenti scaduti?'))return;const ids=alimenti.filter(f=>{const ins=instances.filter(i=>i.foodId===f.id);return ins.length>0&&ins.every(i=>days(i.expiry)<0);}).map(f=>f.id);alimenti=alimenti.filter(f=>!ids.includes(f.id));instances=instances.filter(i=>!ids.includes(i.foodId));saveAlimenti();saveInstances();refreshAll();}
 function clearAll(){if(!confirm('Cancellare tutti i dati?'))return;instances=[];alimenti=[];saveInstances();saveAlimenti();refreshAll();}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // TAB
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function switchTab(tab){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
@@ -886,59 +1050,96 @@ function switchTab(tab){
   const idx=tabs.indexOf(tab);if(idx>=0)document.querySelectorAll('.nb')[idx]?.classList.add('active');
 }
 
-// ═══════════════════════════════════════════════════════════
-// AI CALL
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// AI CALL — usa GPT-4o mini
+// ═══════════════════════════════════════════════════════
 async function callAI(engine,messages,maxTokens=900){
   const key=settings.keys[engine];
-  if(engine==='openai'){const res=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},body:JSON.stringify({model:'gpt-4o',max_tokens:maxTokens,messages})});const d=await res.json();if(d.error)throw new Error(d.error.message);return d.choices[0].message.content;}
-  if(engine==='anthropic'){const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','x-api-key':key},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages})});const d=await res.json();if(d.error)throw new Error(d.error.message);return d.content.map(i=>i.text||'').join('');}
-  if(engine==='gemini'){const parts=messages.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:typeof m.content==='string'?m.content:m.content.find(c=>c.type==='text')?.text||''}]}));const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:parts})});const d=await res.json();if(d.error)throw new Error(d.error.message);return d.candidates[0].content.parts[0].text;}
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages})});const d=await res.json();return d.content.map(i=>i.text||'').join('');
+  if(engine==='openai'){
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${key}`},body:JSON.stringify({model:'gpt-4o-mini',max_tokens:maxTokens,messages})});
+    const d=await res.json();if(d.error)throw new Error(d.error.message);return d.choices[0].message.content;
+  }
+  if(engine==='anthropic'){
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','x-api-key':key},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages})});
+    const d=await res.json();if(d.error)throw new Error(d.error.message);return d.content.map(i=>i.text||'').join('');
+  }
+  if(engine==='gemini'){
+    const parts=messages.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:typeof m.content==='string'?m.content:m.content.find(c=>c.type==='text')?.text||''}]}));
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:parts})});
+    const d=await res.json();if(d.error)throw new Error(d.error.message);return d.candidates[0].content.parts[0].text;
+  }
+  // Fallback artifact (solo dentro claude.ai)
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,messages})});
+  const d=await res.json();return d.content.map(i=>i.text||'').join('');
 }
 
 function buildRecognitionPrompt(){
   const today=new Date().toISOString().split('T')[0];
   const confidence=AI_CONFIG.confidenceInstructions[settings.aiConfidence]||AI_CONFIG.confidenceInstructions.normal;
   const nutri=AI_CONFIG.nutriInstructions[settings.aiNutri]||AI_CONFIG.nutriInstructions.show_estimated;
-  const catList=CATEGORIE.filter(c=>c.id!=='Tutti').map(c=>c.id).join('|');
-  return AI_CONFIG.recognitionPrompt.replace('{TODAY}',today).replace('{CONFIDENCE}',confidence).replace('{NUTRI_INSTRUCTION}',nutri).replace('una delle categorie disponibili',catList);
+  return AI_CONFIG.recognitionPrompt.replace('{TODAY}',today).replace('{CONFIDENCE}',confidence).replace('{NUTRI_INSTRUCTION}',nutri).replace('{CAT_LIST}',CAT_LIST);
 }
 
-// ═══════════════════════════════════════════════════════════
-// SCAN & CONFIRM FORM
-// ═══════════════════════════════════════════════════════════
-let imgB64=null,pendingFood=null,pendingInst=null;
-function triggerUpload(){document.getElementById('imgInput').click();}
-function handleImg(e){const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>{imgB64=ev.target.result.split(',')[1];const p=document.getElementById('imgPrev');p.src=ev.target.result;p.style.display='block';};r.readAsDataURL(file);}
+// ═══════════════════════════════════════════════════════
+// SCAN — supporta più foto
+// ═══════════════════════════════════════════════════════
+let pendingFood=null,pendingInst=null;
 async function analyzeProduct(){await doAnalyze('scanFlow','manualName');}
 async function quickManualAnalyze(){await doAnalyze('qmFlow','qmName');}
+async function analyzeProductWithText(text){
+  document.getElementById('manualName').value=text;
+  await doAnalyze('scanFlow','manualName');
+}
 
 async function doAnalyze(flowId,nameInputId){
   const manual=document.getElementById(nameInputId).value.trim();
   const flow=document.getElementById(flowId);
-  if(!imgB64&&!manual){flow.innerHTML='<div class="aibox error">Carica un\'immagine o inserisci il nome del prodotto.</div>';return;}
+  if(uploadedPhotos.length===0&&!manual){flow.innerHTML='<div class="aibox error">Aggiungi almeno una foto o inserisci il nome del prodotto.</div>';return;}
   flow.innerHTML='<div class="aibox"><span class="thinking">•</span> Analisi in corso<span class="ld"></span></div>';
+
   const prompt=buildRecognitionPrompt();
   const engine=settings.engineRecognition;const hasKey=settings.keys[engine];
-  const fullPrompt=`${prompt}\n${manual?'Nome indicato: "'+manual+'"':''}`;
-  let messages;
-  if(imgB64&&engine==='openai')messages=[{role:'user',content:[{type:'image_url',image_url:{url:`data:image/jpeg;base64,${imgB64}`}},{type:'text',text:fullPrompt}]}];
-  else if(imgB64&&engine==='anthropic')messages=[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:imgB64}},{type:'text',text:fullPrompt}]}];
-  else messages=[{role:'user',content:fullPrompt}];
+  const fullPrompt=`${prompt}\n${manual?'Nome indicato: "'+manual+'"':''}\n${uploadedPhotos.length>1?`Sono fornite ${uploadedPhotos.length} foto dello stesso prodotto da angolazioni diverse. Usale tutte per un riconoscimento più preciso.`:''}`;
+
+  // Costruisci content con tutte le foto
+  let content=[];
+  if(uploadedPhotos.length>0){
+    if(engine==='openai'||(!hasKey&&uploadedPhotos.length>0)){
+      // Per OpenAI: image_url multipli
+      uploadedPhotos.forEach(b64=>{content.push({type:'image_url',image_url:{url:`data:image/jpeg;base64,${b64}`,detail:'high'}});});
+      content.push({type:'text',text:fullPrompt});
+    }else if(engine==='anthropic'){
+      uploadedPhotos.forEach(b64=>{content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}});});
+      content.push({type:'text',text:fullPrompt});
+    }else{
+      content.push({type:'text',text:fullPrompt});
+    }
+  }else{content.push({type:'text',text:fullPrompt});}
+
   try{
     let txt;
-    if(!hasKey){const content=imgB64?[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:imgB64}},{type:'text',text:fullPrompt}]:[{type:'text',text:fullPrompt}];const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content}]})});const d=await res.json();txt=d.content?.map(i=>i.text||'').join('')||'';}
-    else{txt=await callAI(engine,messages,900);}
+    if(!hasKey){
+      // Fallback artifact (Anthropic)
+      const anthropicContent=[];
+      uploadedPhotos.forEach(b64=>anthropicContent.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}}));
+      anthropicContent.push({type:'text',text:fullPrompt});
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:anthropicContent}]})});
+      const d=await res.json();txt=d.content?.map(i=>i.text||'').join('')||'';
+    }else{
+      const messages=[{role:'user',content:engine==='openai'?content:content}];
+      txt=await callAI(engine,messages,900);
+    }
     let info;try{info=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch{info={recognized:false,not_recognized_reason:'Risposta AI non valida. Inserisci il nome manualmente.'};}
+
     if(info.recognized===false){
-      flow.innerHTML=`<div class="aibox warn"><strong>⚠️ Prodotto non riconosciuto</strong><br>${info.not_recognized_reason||'Prodotto non riconosciuto.'}<br><br><small>Prova a: migliorare l'illuminazione, avvicinare la fotocamera, o inserire il nome manualmente.</small></div>
+      flow.innerHTML=`<div class="aibox warn"><strong>⚠️ Prodotto non riconosciuto</strong><br>${info.not_recognized_reason||'Prodotto non riconosciuto.'}<br><br><small>Prova: migliora l'illuminazione, aggiungi più foto, o inserisci il nome manualmente.</small></div>
       <div class="btnrow"><button class="btnp" onclick="resetFlow('${flowId}')">Riprova</button>${flowId==='scanFlow'?'<button class="btns" onclick="openQuickManual()">Inserisci nome</button>':''}</div>`;
       return;
     }
     if(info.confidence==='low')flow.innerHTML=`<div class="aibox warn" style="margin-bottom:8px">⚠️ Confidenza bassa — verifica i dati prima di confermare.</div>`;
     info.color=getCatBg(info.category);
-    pendingFood=info;pendingInst={location:info.suggestedLocation==='entrambi'?'dispensa':info.suggestedLocation,expiry:info.suggestedExpiry,qty:1};
+    pendingFood=info;
+    pendingInst={location:info.suggestedLocation==='entrambi'?'dispensa':info.suggestedLocation,expiry:info.suggestedExpiry,qty:1,qtyUnit:'unità',avgWeight:info.avg_weight_per_unit||null};
     const dup=alimenti.find(a=>a.name.toLowerCase()===info.name.toLowerCase());
     if(dup){showDuplicateChoice(dup,flowId);}else{showConfirmForm(flowId);}
   }catch(e){flow.innerHTML=`<div class="aibox error">Errore: ${e.message||'Riprova.'}</div>`;}
@@ -947,7 +1148,7 @@ async function doAnalyze(flowId,nameInputId){
 function showDuplicateChoice(existing,flowId){
   document.getElementById(flowId).innerHTML=`<div class="dup-choice">
     <div style="font-size:14px;font-weight:700;margin-bottom:4px">Prodotto già nel database</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">"${existing.name}" è già presente. Come vuoi procedere?</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px">"${existing.name}" è già presente.</div>
     <div class="btnrow">
       <button class="btnp" style="font-size:12px" onclick="chooseMode('addqty','${existing.id}','${flowId}')">➕ Aggiungi al conteggio</button>
       <button class="btns" style="font-size:12px" onclick="chooseMode('newinst','${existing.id}','${flowId}')">📋 Nuova istanza<br><small>(scadenza diversa)</small></button>
@@ -955,13 +1156,11 @@ function showDuplicateChoice(existing,flowId){
 }
 function chooseMode(mode,existingId,flowId){pendingFood._existingId=existingId;pendingFood._mode=mode;showConfirmForm(flowId,existingId);}
 
-// Form di conferma CON valori nutrizionali editabili
 function showConfirmForm(flowId,existingId=null){
   const food=existingId?alimenti.find(a=>a.id===existingId):null;
   const name=food?food.name:pendingFood.name,emoji=food?food.emoji:pendingFood.emoji,color=food?food.color:pendingFood.color,cat=food?food.category:pendingFood.category,type=food?food.type:pendingFood.type,mode=pendingFood._mode,p=pendingFood;
-  const existFlow=document.getElementById(flowId).innerHTML;
-  // mantieni eventuale warning confidenza
-  const warnHtml=existFlow.includes('aibox warn')?existFlow.match(/<div class="aibox warn"[^>]*>.*?<\/div>/s)?.[0]||'':'';
+  const warnMatch=document.getElementById(flowId).innerHTML.match(/<div class="aibox warn"[^>]*>.*?<\/div>/s);
+  const warnHtml=warnMatch?warnMatch[0]:'';
 
   let h=warnHtml;
   h+=`<div class="confirm-card">
@@ -983,16 +1182,40 @@ function showConfirmForm(flowId,existingId=null){
     ${p.notes?`<p style="font-size:12px;color:var(--text3);line-height:1.5">${p.notes}</p>`:''}
   </div>`;
 
+  // Quantità con unità
+  const avgW=p.avg_weight_per_unit;
   h+=`<div class="fg"><label class="fl">Seleziona dove lo conservi</label><select class="fi" id="${flowId}_loc"><option value="frigo" ${pendingInst.location==='frigo'?'selected':''}>❄️ Frigo</option><option value="dispensa" ${pendingInst.location==='dispensa'?'selected':''}>🗄️ Dispensa</option></select></div>
-  <div class="row2"><div class="fg"><label class="fl">Data scadenza</label><input class="fi fi-sm" type="date" id="${flowId}_exp" value="${pendingInst.expiry||''}"></div><div class="fg"><label class="fl">${mode==='addqty'?'Aggiungi n°':'Quantità'}</label><input class="fi fi-sm" type="number" id="${flowId}_qty" value="1" min="1" max="99"></div></div>
+  <div class="row2">
+    <div class="fg"><label class="fl">Data scadenza</label><input class="fi fi-sm" type="date" id="${flowId}_exp" value="${pendingInst.expiry||''}"></div>
+    <div class="fg"><label class="fl">${mode==='addqty'?'Aggiungi':'Quantità'}</label>
+      <div class="qty-wrap">
+        <input class="fi fi-sm" type="number" id="${flowId}_qty" value="1" min="1" oninput="updateWeightEst('${flowId}',${avgW||0})">
+        <div class="qty-unit-toggle">
+          <button class="qty-unit-btn active" id="${flowId}_unit_u" onclick="setQtyUnit('${flowId}','unità')">pz</button>
+          <button class="qty-unit-btn" id="${flowId}_unit_g" onclick="setQtyUnit('${flowId}','grammi')">g</button>
+        </div>
+      </div>
+      <input type="hidden" id="${flowId}_qtyUnit" value="unità">
+      <div class="weight-estimate" id="${flowId}_weightEst">${avgW?`1 pz ≈ ${avgW}g`:''}</div>
+    </div>
+  </div>
   <div class="btnrow"><button class="btnp" onclick="confirmAdd('${flowId}',${existingId?`'${existingId}'`:null})">✅ Conferma e aggiungi</button><button class="btns" onclick="resetFlow('${flowId}')">Annulla</button></div>`;
   document.getElementById(flowId).innerHTML=h;
 }
 
+function updateWeightEst(flowId,avgW){
+  if(!avgW)return;
+  const qty=parseFloat(document.getElementById(`${flowId}_qty`).value)||1;
+  const unit=document.getElementById(`${flowId}_qtyUnit`).value;
+  const el=document.getElementById(`${flowId}_weightEst`);
+  if(el)el.textContent=unit==='unità'?`${qty} pz ≈ ${Math.round(qty*avgW)}g (${avgW}g/pz stimati)`:'';
+}
+
 function confirmAdd(flowId,existingFoodId){
-  const loc=document.getElementById(`${flowId}_loc`).value,expiry=document.getElementById(`${flowId}_exp`).value,qty=parseInt(document.getElementById(`${flowId}_qty`).value)||1;
+  const loc=document.getElementById(`${flowId}_loc`).value,expiry=document.getElementById(`${flowId}_exp`).value;
+  const qty=parseFloat(document.getElementById(`${flowId}_qty`).value)||1;
+  const qtyUnit=document.getElementById(`${flowId}_qtyUnit`).value||'unità';
   if(!expiry){alert('Inserisci la data di scadenza');return;}
-  // Leggi valori nutrizionali editati
   const kcal=parseFloat(document.getElementById(`${flowId}_kcal`).value)||null;
   const protein=parseFloat(document.getElementById(`${flowId}_protein`).value)||null;
   const fat=parseFloat(document.getElementById(`${flowId}_fat`).value)||null;
@@ -1000,25 +1223,58 @@ function confirmAdd(flowId,existingFoodId){
   const fiber=parseFloat(document.getElementById(`${flowId}_fiber`).value)||null;
   const mode=pendingFood._mode;let foodId=existingFoodId;
   if(!foodId){
-    const nf={id:Date.now().toString(),name:pendingFood.name,brand:pendingFood.brand||null,category:pendingFood.category,emoji:pendingFood.emoji,color:pendingFood.color,type:pendingFood.type||'trasformato',location:loc,ingredients:pendingFood.ingredients||[],allergens:pendingFood.allergens||[],kcal,protein,fat,carbs,fiber,values_estimated:pendingFood.values_estimated||false,notes:pendingFood.notes||''};
+    const nf={id:Date.now().toString(),name:pendingFood.name,brand:pendingFood.brand||null,category:pendingFood.category,emoji:pendingFood.emoji,color:pendingFood.color,type:pendingFood.type||'trasformato',location:loc,ingredients:pendingFood.ingredients||[],allergens:pendingFood.allergens||[],kcal,protein,fat,carbs,fiber,values_estimated:pendingFood.values_estimated||false,avg_weight_per_unit:pendingFood.avg_weight_per_unit||null,notes:pendingFood.notes||''};
     alimenti.push(nf);saveAlimenti();foodId=nf.id;
   }else{
-    // Aggiorna valori nutrizionali anche per alimento esistente se modificati
     const f=alimenti.find(a=>a.id===foodId);if(f){f.kcal=kcal;f.protein=protein;f.fat=fat;f.carbs=carbs;f.fiber=fiber;saveAlimenti();}
   }
-  if(mode==='addqty'){const ex=instances.find(i=>i.foodId===foodId&&i.location===loc);if(ex){ex.qty=(ex.qty||1)+qty;}else{instances.push({id:Date.now().toString(),foodId,location:loc,expiry,qty,addedAt:new Date().toISOString()});}}
-  else{instances.push({id:Date.now().toString(),foodId,location:loc,expiry,qty,addedAt:new Date().toISOString()});}
+  const instData={id:Date.now().toString(),foodId,location:loc,expiry,qty,qtyUnit,avgWeight:pendingFood.avg_weight_per_unit||null,addedAt:new Date().toISOString()};
+  if(mode==='addqty'){const ex=instances.find(i=>i.foodId===foodId&&i.location===loc);if(ex){ex.qty=(ex.qty||1)+qty;ex.qtyUnit=qtyUnit;}else{instances.push(instData);}}
+  else{instances.push(instData);}
   saveInstances();resetFlow(flowId);refreshAll();
   if(flowId==='qmFlow')closeModal('mQuickManual');
   switchTab(loc);
 }
 
-function resetFlow(flowId){document.getElementById(flowId).innerHTML='';if(flowId==='scanFlow'){document.getElementById('manualName').value='';document.getElementById('imgPrev').style.display='none';imgB64=null;document.getElementById('imgInput').value='';}pendingFood=null;pendingInst=null;}
+function resetFlow(flowId){
+  document.getElementById(flowId).innerHTML='';
+  if(flowId==='scanFlow'){document.getElementById('manualName').value='';uploadedPhotos=[];renderPhotoGrid();}
+  pendingFood=null;pendingInst=null;
+}
 function openQuickManual(){document.getElementById('qmFlow').innerHTML='';document.getElementById('qmName').value='';openModal('mQuickManual');}
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// DETAIL MODAL
+// ═══════════════════════════════════════════════════════
+function showDetail(fid){
+  const f=foodById(fid),insts=instances.filter(i=>i.foodId===fid);
+  let h=`<div class="mhandle"></div>
+    <div style="display:flex;align-items:center;gap:13px;margin-bottom:16px">
+      <div style="width:54px;height:54px;border-radius:14px;background:${f.color||'#EEEDF9'};display:flex;align-items:center;justify-content:center;font-size:28px">${f.emoji||'📦'}</div>
+      <div><div style="font-size:20px;font-weight:800">${f.name}</div><div style="font-size:13px;color:var(--text3);margin-top:3px">${f.category||''}${f.brand?' · '+f.brand:''}</div></div>
+    </div>`;
+  if(f.kcal||f.protein||f.fat||f.carbs){
+    h+=`<div class="detail-section"><h3>Valori Nutrizionali (per 100g)${f.values_estimated?' <span style="color:var(--warn);font-size:10px">⚠️ Stimati</span>':''}</h3>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:var(--bg);border-radius:var(--radius-sm);padding:10px;margin-top:4px">
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700">${f.kcal||'—'}</div><div style="font-size:10px;color:var(--text3)">kcal</div></div>
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700">${f.protein||'—'}g</div><div style="font-size:10px;color:var(--text3)">proteine</div></div>
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700">${f.fat||'—'}g</div><div style="font-size:10px;color:var(--text3)">grassi</div></div>
+        <div style="text-align:center"><div style="font-size:14px;font-weight:700">${f.carbs||'—'}g</div><div style="font-size:10px;color:var(--text3)">carb.</div></div>
+      </div></div>`;
+  }
+  h+=`<div class="detail-section"><h3>Informazioni</h3>
+    <div class="detail-row"><span class="detail-key">Tipo</span><span class="detail-val">${f.type==='materia_prima'?'Materia prima':'Trasformato'}</span></div>
+    ${f.avg_weight_per_unit?`<div class="detail-row"><span class="detail-key">Peso medio</span><span class="detail-val">${f.avg_weight_per_unit}g/pz</span></div>`:''}
+    ${f.notes?`<div class="detail-row"><span class="detail-key">Note</span><span class="detail-val">${f.notes}</span></div>`:''}
+  </div>`;
+  if(f.allergens?.length)h+=`<div class="detail-section"><h3>Allergeni</h3><div class="ac-tags" style="margin-top:0">${f.allergens.map(a=>`<span class="tag allergen">${a}</span>`).join('')}</div></div>`;
+  h+=`<div class="btnrow" style="margin-top:16px"><button class="btns btnd" onclick="deleteFoodConfirm('${f.id}')">${ICO.trash} Rimuovi</button><button class="btns" onclick="closeModal('mDetail')">Chiudi</button></div>`;
+  document.getElementById('mDetailContent').innerHTML=h;openModal('mDetail');
+}
+
+// ═══════════════════════════════════════════════════════
 // RECIPES
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 let recipeSubtab='auto';
 function setRecipeSubtab(tab,el){recipeSubtab=tab;document.querySelectorAll('.rsubtab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById('rsub-auto').style.display=tab==='auto'?'block':'none';document.getElementById('rsub-manual').style.display=tab==='manual'?'block':'none';}
 async function showCreateRecipes(){document.getElementById('recipeResultsArea').style.display='block';setRecipeSubtab('auto',document.getElementById('rsubtab-auto'));renderIngGrid();await doAutoRecipes();}
@@ -1026,7 +1282,7 @@ function renderIngGrid(){
   const valid=instances.filter(i=>days(i.expiry)>=0);
   const grid=document.getElementById('ingGrid');
   if(!valid.length){grid.innerHTML='<p style="font-size:13px;color:var(--text3);grid-column:span 2">Nessun ingrediente disponibile.</p>';return;}
-  grid.innerHTML=valid.map(ins=>{const food=foodById(ins.foodId);if(!food.name)return'';const d=days(ins.expiry),isExp=d<=7&&d>=0;const s=status(d);return`<div class="ing-item${isExp?' expiring':''}" id="ing_${ins.id}" onclick="toggleIng('${ins.id}')"><span class="ii-emoji">${food.emoji||'📦'}</span><div class="ii-info"><div class="ii-name">${food.name}</div>${isExp?`<span class="ii-badge b-w">${d}gg</span>`:''}</div></div>`;}).filter(Boolean).join('');
+  grid.innerHTML=valid.map(ins=>{const food=foodById(ins.foodId);if(!food.name)return'';const d=days(ins.expiry),isExp=d<=7&&d>=0;return`<div class="ing-item${isExp?' expiring':''}" id="ing_${ins.id}" onclick="toggleIng('${ins.id}')"><span class="ii-emoji">${food.emoji||'📦'}</span><div class="ii-info"><div class="ii-name">${food.name}</div>${isExp?`<span class="ii-badge b-w">${d}gg</span>`:''}</div></div>`;}).filter(Boolean).join('');
   updateIngCounter();
 }
 let selectedIngs=new Set();
@@ -1046,13 +1302,13 @@ async function doAutoRecipes(){
   const sorted=[...valid].sort((a,b)=>days(a.expiry)-days(b.expiry));
   const names=sorted.map(i=>foodById(i.foodId).name).filter(Boolean);
   const expiringNames=sorted.filter(i=>days(i.expiry)<=7&&days(i.expiry)>=0).map(i=>foodById(i.foodId).name).filter(Boolean);
-  c.innerHTML='<div class="aibox"><span class="thinking">•</span> Creo ricette con i tuoi ingredienti<span class="ld"></span></div>';
+  c.innerHTML='<div class="aibox"><span class="thinking">•</span> Creo ricette americane con i tuoi ingredienti<span class="ld"></span></div>';
   const results=await fetchAIRecipes(names,expiringNames);
   c.innerHTML=renderRecipeCards(results)||`<div class="empty"><p>Nessuna ricetta trovata</p></div>`;
 }
 async function fetchAIRecipes(names,expiringNames){
   const ingStr=names.join(', ');
-  const expiringNote=expiringNames.length>0?` Prioritizza l'uso di questi ingredienti in scadenza: ${expiringNames.join(', ')}.`:'';
+  const expiringNote=expiringNames.length>0?` Prioritize using these expiring ingredients: ${expiringNames.join(', ')}.`:'';
   const prompt=AI_CONFIG.recipePrompt.replace('{INGREDIENTS}',ingStr).replace('{EXPIRING_NOTE}',expiringNote);
   const engine=settings.engineRecipes;const hasKey=settings.keys[engine];
   try{
@@ -1074,9 +1330,9 @@ function renderRecipeCards(results){
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // SETTINGS
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function updateSettingsUI(){
   document.getElementById('spoonDesc').textContent=settings.spoonKey?'Key configurata':'Key non configurata';
   document.getElementById('engineRecognition').value=settings.engineRecognition||'openai';
@@ -1089,20 +1345,19 @@ function updateSettingsUI(){
 }
 function saveAIConfig(){settings.aiConfidence=document.getElementById('aiConfidence').value;settings.aiNutri=document.getElementById('aiNutri').value;saveSettings();}
 function updateKeyStatus(e){const val=document.getElementById(e+'Key')?.value||settings.keys[e]||'';const el=document.getElementById(e+'Status');if(el){el.className=val?'api-on':'api-off';el.textContent=val?'CONFIGURATA':'NON CONFIG.';}}
-function saveKey(e){settings.keys[e]=document.getElementById(e+'Key').value.trim();saveSettings();updateKeyStatus(e);alert(`Key ${e} salvata!`);}
-async function testKey(e){const key=settings.keys[e];if(!key){alert('Inserisci prima la API key');return;}try{await callAI(e,[{role:'user',content:'Rispondi solo: OK'}],10);alert(`✅ ${e} funziona correttamente.`);}catch(err){alert(`❌ Errore: ${err.message}`);}}
+function saveKey(e){settings.keys[e]=document.getElementById(e+'Key').value.trim();saveSettings();updateKeyStatus(e);checkApiKeyWarning();alert(`Key ${e} salvata!`);}
+async function testKey(e){const key=settings.keys[e];if(!key){alert('Inserisci prima la API key');return;}try{await callAI(e,[{role:'user',content:'Reply with: OK'}],10);alert(`✅ ${e} funziona correttamente.`);}catch(err){alert(`❌ Errore: ${err.message}`);}}
 function saveEngineSettings(){settings.engineRecognition=document.getElementById('engineRecognition').value;settings.engineRecipes=document.getElementById('engineRecipes').value;saveSettings();}
 function saveSpoonKey(){settings.spoonKey=document.getElementById('spoonKeyIn').value.trim();saveSettings();updateSettingsUI();closeModal('mSpoon');}
 function saveCustomApi(){const name=document.getElementById('cApiName').value.trim(),url=document.getElementById('cApiUrl').value.trim();if(!name||!url){alert('Nome e URL obbligatori');return;}if(!settings.customApis)settings.customApis=[];settings.customApis.push({id:Date.now().toString(),name,url,key:document.getElementById('cApiKey').value.trim(),note:document.getElementById('cApiNote').value.trim()});saveSettings();updateSettingsUI();closeModal('mCustom');['cApiName','cApiUrl','cApiKey','cApiNote'].forEach(id=>document.getElementById(id).value='');}
 function removeApi(id){settings.customApis=settings.customApis.filter(a=>a.id!==id);saveSettings();updateSettingsUI();}
 
-// ═══════════════════════════════════════════════════════════
 // MODALS
-// ═══════════════════════════════════════════════════════════
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function closeOut(e,id){if(e.target.classList.contains('overlay'))closeModal(id);}
 
+// INIT
 loadAll();
 </script>
 </body>
