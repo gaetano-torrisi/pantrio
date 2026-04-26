@@ -245,7 +245,8 @@ select.fi{cursor:pointer}
 .ing-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
 .ing-item{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s}
 .ing-item.selected{border-color:var(--accent);background:var(--accent-light)}
-.ing-item.expiring{border-color:rgba(138,82,8,.3);background:var(--warn-bg)}
+/* FIX 3: scroll ricette */
+#tab-ricette{padding-bottom:calc(var(--nav-h) + 32px)}
 .ii-emoji{font-size:20px;flex-shrink:0}
 .ii-info{flex:1;min-width:0}
 .ii-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -704,11 +705,26 @@ function checkApiKeyWarning(){const h=settings.keys.openai||settings.keys.anthro
 
 // ═══ AI CONFIG ═══
 const AI_CONFIG={
-  recognitionPrompt:`Sei un assistente nutrizionale italiano. {CONFIDENCE} {NUTRI_INSTRUCTION}
-Analizza le immagini. Rispondi SOLO con JSON valido:
-{"recognized":true/false,"confidence":"high|medium|low","not_recognized_reason":null,"name":"nome","brand":null,"category":"{CAT_LIST}","emoji":"emoji","type":"materia_prima|trasformato","suggestedLocation":"frigo|dispensa|entrambi","suggestedExpiry":"YYYY-MM-DD","allergens":[],"kcal":null,"protein":null,"fat":null,"carbs":null,"values_estimated":false,"avg_weight_per_unit":null,"notes":""}`,
-  confidenceInstructions:{strict:'Se non sei sicuro al 100% imposta "recognized":false.',normal:'Se non riesci a identificare con certezza imposta "recognized":false.',lenient:'Prova sempre a riconoscere. Solo se irriconoscibile imposta "recognized":false.'},
-  nutriInstructions:{show_estimated:'Valori per 100g: reali se certi, altrimenti medi con "values_estimated":true.',show_all:'Inserisci sempre valori nutrizionali.',hide_if_estimated:'Solo se certi da confezione visibile.'},
+  recognitionPrompt:`Sei un assistente nutrizionale italiano esperto nel leggere etichette alimentari dalle foto.
+{CONFIDENCE}
+
+ISTRUZIONI FONDAMENTALI — leggi TUTTO il testo visibile nelle foto:
+- "name": leggi il nome esatto dal packaging
+- "brand": leggi la marca dal packaging
+- "suggestedExpiry": leggi la data di scadenza stampata (es. "31/12/2025" → "2025-12-31"). Se non visibile, stima in base alla categoria (oggi è {TODAY})
+- "package_weight": leggi il peso della confezione dal packaging (es. "500g" → 500, "1kg" → 1000). null se non visibile
+- "avg_weight_per_unit": peso medio per singola unità solo per prodotti venduti a pezzo (uovo=60, mela=180). null per prodotti in confezione
+- "kcal","protein","fat","carbs","fiber": leggi dalla tabella nutrizionale sul packaging (valori per 100g). Se non visibile, stima i valori medi tipici
+- "values_estimated": true SOLO per i valori nutrizionali che non hai letto dal packaging ma hai stimato. false se hai letto tutti i valori dall'etichetta
+- "allergens": leggi dal packaging
+- "ingredients": leggi dal packaging
+
+{NUTRI_INSTRUCTION}
+
+Rispondi SOLO con JSON valido (nessun testo aggiuntivo):
+{"recognized":true/false,"confidence":"high|medium|low","not_recognized_reason":null,"name":"nome","brand":null,"category":"{CAT_LIST}","emoji":"emoji","type":"materia_prima|trasformato","suggestedLocation":"frigo|dispensa|entrambi","suggestedExpiry":"YYYY-MM-DD","package_weight":null,"avg_weight_per_unit":null,"ingredients":[],"allergens":[],"kcal":null,"protein":null,"fat":null,"carbs":null,"fiber":null,"values_estimated":false,"notes":""}`,
+  confidenceInstructions:{strict:'Se non sei sicuro al 100% imposta "recognized":false. Non inventare dati non visibili.',normal:'Se non riesci a identificare con certezza imposta "recognized":false con breve spiegazione.',lenient:'Prova sempre a riconoscere. Solo se completamente irriconoscibile imposta "recognized":false.'},
+  nutriInstructions:{show_estimated:'Valori nutrizionali: leggi dall\'etichetta se visibile, altrimenti stima i valori medi tipici e imposta "values_estimated":true.',show_all:'Inserisci sempre valori nutrizionali, letti o stimati.',hide_if_estimated:'Inserisci valori nutrizionali solo se visibili sull\'etichetta, altrimenti null.'},
   recipePrompt:`Sei uno chef professionista. Ingredienti: {INGREDIENTS}.{EXPIRING_NOTE} Crea 2 ricette. SOLO array JSON: [{"title":"nome","time":"tempo","difficulty":"Facile|Media|Difficile","ingredients_used":[],"expiring_used":[],"description":"1-2 frasi","steps":[]}]`
 };
 
@@ -912,11 +928,20 @@ function renderQueueList(){
 
 function buildInlineConfirmForm(item){
   const info=item.result;
-  const avgW=info.avg_weight_per_unit;
+  // Grammi: priorità a package_weight (peso confezione letto dall'AI), poi avg_weight_per_unit
+  const grammiDefault=info.package_weight||info.avg_weight_per_unit||'';
+  const grammiNote=info.package_weight
+    ?`<div style="font-size:10px;color:var(--ok);margin-top:2px">📦 Letto dalla foto</div>`
+    :info.avg_weight_per_unit
+    ?`<div style="font-size:10px;color:var(--accent);margin-top:2px">🤖 ${info.avg_weight_per_unit}g/pz (AI)</div>`:'';
   const loc=info.suggestedLocation==='entrambi'?'dispensa':info.suggestedLocation;
   const isEst=info.values_estimated&&settings.aiNutri!=='hide_if_estimated';
+  // Nota scadenza: se letta dalla foto (confidence high e data presente) o stimata
+  const expiryNote=info.suggestedExpiry
+    ?(info.confidence==='high'?'<div style="font-size:10px;color:var(--ok);margin-top:2px">📅 Letta dalla foto — verifica sulla confezione</div>':'<div style="font-size:10px;color:var(--warn);margin-top:2px">⚠️ Data stimata — inserisci quella sulla confezione</div>')
+    :'<div style="font-size:10px;color:var(--danger);margin-top:2px">⚠️ Inserisci la data di scadenza dalla confezione</div>';
   return `<div class="queue-confirm-form">
-    ${isEst?'<div class="estimated-note" style="margin-bottom:8px">🤖 Valori stimati AI</div>':''}
+    ${isEst?'<div class="estimated-note" style="margin-bottom:8px">🤖 Alcuni valori nutrizionali sono stimati (non letti dall\'etichetta)</div>':''}
     <div class="row4" style="margin-bottom:8px">
       <div><div class="qty-label">kcal</div>${numField('qf_kcal_'+item.id,info.kcal,0,1)}</div>
       <div><div class="qty-label">prot.</div>${numField('qf_prot_'+item.id,info.protein,0,0.1)}</div>
@@ -933,11 +958,12 @@ function buildInlineConfirmForm(item){
       <div class="fg" style="margin-bottom:0"><label class="fl">Data scadenza</label>
         <input class="fi fi-sm" type="date" id="qf_exp_${item.id}" value="${info.suggestedExpiry||''}" onchange="this.nextElementSibling.textContent=this.value?'📅 '+this.value.split('-').reverse().join('/'):''" >
         <div style="font-size:10px;color:var(--text3);margin-top:2px">${info.suggestedExpiry?'📅 '+fmtDate(info.suggestedExpiry):''}</div>
+        ${expiryNote}
       </div>
     </div>
     <div class="row2" style="margin-bottom:10px">
-      <div><div class="qty-label" style="margin-bottom:4px">Pezzi (pz)</div>${numField('qf_qty_'+item.id,1,0,1)}</div>
-      <div><div class="qty-label" style="margin-bottom:4px">Grammi (g)</div>${numField('qf_g_'+item.id,avgW||'',0,1)}${avgW?`<div style="font-size:10px;color:var(--accent);margin-top:2px">🤖 ${avgW}g/pz</div>`:''}</div>
+      <div><div class="qty-label" style="margin-bottom:4px">Quantità</div>${numField('qf_qty_'+item.id,1,0,1)}</div>
+      <div><div class="qty-label" style="margin-bottom:4px">Grammi (g)</div>${numField('qf_g_'+item.id,grammiDefault,0,1)}${grammiNote}</div>
     </div>
     <button class="btnp" style="width:100%;font-size:13px;padding:11px" onclick="confirmQueueItem('${item.id}')">✅ Conferma e aggiungi</button>
   </div>`;
@@ -1078,7 +1104,9 @@ async function addBarcodeCodeToQueue(code){
     if(d.status===1&&d.product){
       const p=d.product,n=p.nutriments||{};
       const cat=mapOFFCategory(p.categories_tags||[]);
-      const info={recognized:true,confidence:'high',name:p.product_name_it||p.product_name||p.brands||'Prodotto',brand:p.brands||null,category:cat,emoji:getEmojiForCategory(cat),type:'trasformato',suggestedLocation:getSuggestedLocation(p.categories_tags||[]),suggestedExpiry:'',allergens:(p.allergens_tags||[]).map(a=>a.replace('en:','').replace('it:','')),kcal:Math.round(n['energy-kcal_100g'])||null,protein:Math.round(n.proteins_100g)||null,fat:Math.round(n.fat_100g)||null,carbs:Math.round(n.carbohydrates_100g)||null,values_estimated:false,avg_weight_per_unit:null,notes:`Open Food Facts · ${code}`};
+      const qtyRaw=p.product_quantity||p.quantity||'';
+      const packageWeight=parseFloat(qtyRaw.replace(/[^\d.]/g,''))||null;
+      const info={recognized:true,confidence:'high',name:p.product_name_it||p.product_name||p.brands||'Prodotto',brand:p.brands||null,category:cat,emoji:getEmojiForCategory(cat),type:'trasformato',suggestedLocation:getSuggestedLocation(p.categories_tags||[]),suggestedExpiry:'',allergens:(p.allergens_tags||[]).map(a=>a.replace('en:','').replace('it:','')),kcal:Math.round(n['energy-kcal_100g'])||null,protein:Math.round(n.proteins_100g)||null,fat:Math.round(n.fat_100g)||null,carbs:Math.round(n.carbohydrates_100g)||null,values_estimated:false,package_weight:packageWeight,avg_weight_per_unit:null,notes:`Open Food Facts · ${code}`};
       info.color=getCatBg(info.category);
       // Aggiunge direttamente come 'done' — nessuna analisi AI necessaria
       pushToQueue({id:queueId(),type:'barcode',status:'done',label:info.name,photos:[],manual:'',result:info,error:null});
@@ -1138,7 +1166,10 @@ async function callRecognitionAI(photos,manual){
 // ═══ CARDS ═══
 function instCard(ins){
   const food=foodById(ins.foodId),d=days(ins.expiry),s=status(d),isF=ins.location==='frigo';
-  const qtyStr=ins.grammi?`${ins.grammi}g`:(ins.qty>1?`×${ins.qty}`:'×1');
+  // FIX 1: mostra sempre ×N · Xg quando entrambi presenti
+  const qtyPart=ins.qty>0?`×${ins.qty}`:'';
+  const gPart=ins.grammi?`${ins.grammi}g`:'';
+  const qtyStr=[qtyPart,gPart].filter(Boolean).join(' · ')||'×1';
   return `<div class="pc" onclick="openEditInstance('${ins.id}')">
     <div class="pi" style="background:${food.color||'#EEEDF9'}">${food.emoji||'📦'}</div>
     <div class="pinfo">
@@ -1198,8 +1229,11 @@ function openEditInstance(insId){
   document.getElementById('mEditFoodContent').innerHTML=`<div class="mhandle"></div><div class="edit-banner">${ICO.edit} Modifica prodotto</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px"><div style="width:44px;height:44px;border-radius:12px;background:${food.color||'#EEEDF9'};display:flex;align-items:center;justify-content:center;font-size:22px">${food.emoji||'📦'}</div><div><div style="font-size:16px;font-weight:700">${food.name}</div><div style="font-size:12px;color:var(--text3)">${food.category||''}</div></div></div>
     <div class="fg"><label class="fl">Conserva in</label><select class="fi" id="ei_loc"><option value="frigo" ${ins.location==='frigo'?'selected':''}>❄️ Frigo</option><option value="dispensa" ${ins.location==='dispensa'?'selected':''}>🗄️ Dispensa</option></select></div>
-    <div class="fg"><label class="fl">Data scadenza</label><input class="fi fi-sm" type="date" id="ei_exp" value="${ins.expiry||''}" onchange="this.nextElementSibling.textContent=this.value?'📅 '+this.value.split('-').reverse().join('/'):''" ><div style="font-size:11px;color:var(--text3);margin-top:4px">${ins.expiry?'📅 '+fmtDate(ins.expiry):''}</div></div>
-    <div class="row2"><div class="fg"><label class="fl">Pezzi</label>${numField('ei_qty',ins.qty||1,0,1)}</div><div class="fg"><label class="fl">Grammi</label>${numField('ei_grammi',ins.grammi||'',0,1)}</div></div>
+    <div class="fg"><label class="fl">Data scadenza</label><input class="fi fi-sm" type="date" id="ei_exp" value="${ins.expiry||''}"></div>
+    <div class="row2">
+      <div class="fg"><label class="fl">Quantità</label>${numField('ei_qty',ins.qty||1,0,1)}</div>
+      <div class="fg"><label class="fl">Grammi</label>${numField('ei_grammi',ins.grammi||'',0,1)}</div>
+    </div>
     <div class="btnrow"><button class="btnp" onclick="saveEditInstance('${insId}')">💾 Salva</button><button class="btns" onclick="openEditFood('${ins.foodId}')" style="font-size:12px">✏️ Scheda</button><button class="btns btnd" onclick="deleteInstance('${insId}');closeModal('mEditFood')" style="flex:none;padding:13px 16px">${ICO.trash}</button></div>`;
   openModal('mEditFood');
 }
@@ -1280,7 +1314,7 @@ function renderIngGrid(){
 let selectedIngs=new Set();
 function toggleIng(insId){const el=document.getElementById('ing_'+insId);if(selectedIngs.has(insId)){selectedIngs.delete(insId);el.classList.remove('selected');}else{selectedIngs.add(insId);el.classList.add('selected');}updateIngCounter();}
 function updateIngCounter(){const n=selectedIngs.size;document.getElementById('ingSelectedCount').textContent=n;const btn=document.getElementById('ingSearchBtn');btn.disabled=n<3;btn.style.opacity=n<3?'0.5':'1';}
-async function searchBySelected(){const names=[...selectedIngs].map(id=>{const ins=instances.find(i=>i.id===id);return ins?foodById(ins.foodId).name:null;}).filter(Boolean);const c=document.getElementById('manualRecipeResults');c.innerHTML='<div class="aibox"><span class="thinking">•</span> Genero ricette<span class="ld"></span></div>';c.innerHTML=renderRecipeCards(await fetchAIRecipes(names,[]))||`<div class="empty"><p>Nessuna ricetta trovata</p></div>`;}
+async function searchBySelected(){const names=[...selectedIngs].map(id=>{const ins=instances.find(i=>i.id===id);return ins?foodById(ins.foodId).name:null;}).filter(Boolean);const c=document.getElementById('manualRecipeResults');c.innerHTML='<div class="aibox"><span class="thinking">•</span> Genero ricette<span class="ld"></span></div>';  c.innerHTML=renderRecipeCards(await fetchAIRecipes(names,[]),'manualRecipeResults')||`<div class="empty"><p>Nessuna ricetta trovata</p></div>`;}
 async function doAutoRecipes(){
   const valid=instances.filter(i=>days(i.expiry)>=0);const c=document.getElementById('recipeResults');
   document.getElementById('aiRecipeStartBox').style.display='none';
@@ -1289,16 +1323,52 @@ async function doAutoRecipes(){
   const names=sorted.map(i=>foodById(i.foodId).name).filter(Boolean);
   const expiringNames=sorted.filter(i=>days(i.expiry)<=7&&days(i.expiry)>=0).map(i=>foodById(i.foodId).name).filter(Boolean);
   c.innerHTML='<div class="aibox"><span class="thinking">•</span> Genero ricette<span class="ld"></span></div>';
-  c.innerHTML=renderRecipeCards(await fetchAIRecipes(names,expiringNames))||`<div class="empty"><p>Nessuna ricetta trovata</p></div>`;
+  c.innerHTML=renderRecipeCards(await fetchAIRecipes(names,expiringNames),'recipeResults')||`<div class="empty"><p>Nessuna ricetta trovata</p></div>`;
 }
 async function fetchAIRecipes(names,expiringNames){
   const p=AI_CONFIG.recipePrompt.replace('{INGREDIENTS}',names.join(', ')).replace('{EXPIRING_NOTE}',expiringNames.length>0?` Dai priorità a: ${expiringNames.join(', ')}.`:'');
   const engine=settings.engineRecipes;const hasKey=settings.keys[engine];
   try{let txt;if(!hasKey){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:p}]})});const d=await r.json();txt=d.content?.map(i=>i.text||'').join('')||'';}else{txt=await callAI(engine,[{role:'user',content:p}],1200);}let ai;try{ai=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch{ai=[];}return ai;}catch{return[];}
 }
-function renderRecipeCards(results){
+// FIX 5: ricette con rimuovi/pulisci tutto
+let generatedRecipes=[];
+
+function renderRecipeCards(results,containerId){
   if(!results||!results.length)return'';
-  return results.map(r=>{const meta=[r.time,r.difficulty].filter(Boolean).join(' · ');const ings=(r.ingredients_used||[]).map(i=>`<span class="tag">${i}</span>`).join('');const expUsed=(r.expiring_used||[]).filter(Boolean).map(i=>`<span class="tag" style="background:var(--warn-bg);color:var(--warn)">${i}</span>`).join('');const steps=r.steps?`<ol style="font-size:13px;color:var(--text2);padding-left:18px;margin-top:8px;line-height:1.9">${r.steps.map(s=>`<li style="margin-bottom:3px">${s}</li>`).join('')}</ol>`:'';return`<div class="rc"><span class="rsrc src-a">🤖 AI</span><div class="rtitle">${r.title}</div>${meta?`<div class="rmeta">${meta}</div>`:''}${expUsed?`<div style="margin-bottom:8px">${expUsed}</div>`:''}<div style="margin-bottom:8px">${ings}</div>${r.description?`<p style="font-size:13px;color:var(--text2);margin-bottom:6px;line-height:1.6">${r.description}</p>`:''}${steps}</div>`;}).join('');
+  generatedRecipes=results;
+  const cards=results.map((r,idx)=>{
+    const meta=[r.time,r.difficulty].filter(Boolean).join(' · ');
+    const ings=(r.ingredients_used||[]).map(i=>`<span class="tag">${i}</span>`).join('');
+    const expUsed=(r.expiring_used||[]).filter(Boolean).map(i=>`<span class="tag" style="background:var(--warn-bg);color:var(--warn)">${i}</span>`).join('');
+    const steps=r.steps?`<ol style="font-size:13px;color:var(--text2);padding-left:18px;margin-top:8px;line-height:1.9">${r.steps.map(s=>`<li style="margin-bottom:3px">${s}</li>`).join('')}</ol>`:'';
+    return`<div class="rc" id="rc_${containerId}_${idx}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span class="rsrc src-a">🤖 AI</span>
+        <button onclick="removeRecipe('${containerId}',${idx})" style="background:none;border:none;color:var(--text3);font-size:12px;font-weight:600;cursor:pointer">✕ Rimuovi</button>
+      </div>
+      <div class="rtitle">${r.title}</div>
+      ${meta?`<div class="rmeta">${meta}</div>`:''}
+      ${expUsed?`<div style="margin-bottom:8px">${expUsed}</div>`:''}
+      <div style="margin-bottom:8px">${ings}</div>
+      ${r.description?`<p style="font-size:13px;color:var(--text2);margin-bottom:6px;line-height:1.6">${r.description}</p>`:''}
+      ${steps}
+    </div>`;
+  }).join('');
+  const clearBtn=`<button onclick="clearRecipes('${containerId}')" style="width:100%;padding:12px;background:var(--danger-bg);color:var(--danger);border:1.5px solid rgba(184,50,50,.2);border-radius:var(--radius-sm);font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">🗑 Pulisci tutte le ricette</button>`;
+  return cards+clearBtn;
+}
+
+function removeRecipe(containerId,idx){
+  const el=document.getElementById(`rc_${containerId}_${idx}`);
+  if(el)el.style.display='none';
+}
+
+function clearRecipes(containerId){
+  const c=document.getElementById(containerId);
+  if(c){c.innerHTML='';generatedRecipes=[];}
+  // Ripristina bottone genera
+  const startBox=document.getElementById('aiRecipeStartBox');
+  if(startBox)startBox.style.display='block';
 }
 
 // SETTINGS
