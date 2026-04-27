@@ -503,6 +503,28 @@ select.fi{cursor:pointer}
   </div>
 </div>
 
+<!-- SCADENZA/SCADUTI (tab virtuale da stats) -->
+<div id="tab-tutti-scadenza" class="tab">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+    <button onclick="switchTab('home')" style="background:none;border:none;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Home
+    </button>
+    <span style="font-size:13px;color:var(--text3)">›</span>
+    <span id="tuttiFilterTitle" style="font-size:13px;font-weight:700">In scadenza</span>
+  </div>
+  <div id="tuttiFilterList"></div>
+</div>
+<div id="tab-tutti-scaduti" class="tab">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+    <button onclick="switchTab('home')" style="background:none;border:none;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>Home
+    </button>
+    <span style="font-size:13px;color:var(--text3)">›</span>
+    <span id="tuttiFilterTitle2" style="font-size:13px;font-weight:700">Scaduti</span>
+  </div>
+  <div id="tuttiFilterList2"></div>
+</div>
+
 <!-- SPESA -->
 <div id="tab-spesa" class="tab">
   <div class="spesa-placeholder">
@@ -568,13 +590,16 @@ select.fi{cursor:pointer}
 
 </div><!-- .app -->
 
-<!-- BOTTOM NAV — Home · Frigo · + · Dispensa · Ricette · Spesa · Impost. -->
-<div class="bnav">
+<!-- BOTTOM NAV — 6 voci + centrale -->
+<div class="bnav" style="justify-content:space-around">
   <button class="nb active" id="nb-home" onclick="switchTab('home')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>Home
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>Home
   </button>
   <button class="nb" id="nb-frigo" onclick="switchTab('frigo')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="10" y1="14" x2="10" y2="17"/></svg>Frigo
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="10" y1="14" x2="10" y2="17"/></svg>Frigo
+  </button>
+  <button class="nb" id="nb-dispensa" onclick="switchTab('dispensa')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/></svg>Dispensa
   </button>
   <!-- + CENTRALE -->
   <button class="nb-plus-wrap" onclick="toggleInsertMenu()">
@@ -582,11 +607,14 @@ select.fi{cursor:pointer}
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     </div>
   </button>
-  <button class="nb" id="nb-dispensa" onclick="switchTab('dispensa')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1"/></svg>Dispensa
-  </button>
   <button class="nb" id="nb-ricette" onclick="switchTab('ricette')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="22"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>Ricette
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><line x1="7" y1="2" x2="7" y2="22"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>Ricette
+  </button>
+  <button class="nb" id="nb-spesa" onclick="switchTab('spesa')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Spesa
+  </button>
+  <button class="nb" id="nb-settings" onclick="switchTab('settings')">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>Impost.
   </button>
 </div>
 
@@ -890,14 +918,12 @@ function statClick(key){
     if(chip)setLocFilter('dispensa','tutti',chip);
   }
   else if(key==='scadenza'){
-    switchTab('frigo');
-    const chips=document.querySelectorAll('#frigoChips .chip');
-    if(chips[2])setLocFilter('frigo','scadenza',chips[2]);
+    // Mostra tab dedicato con tutti gli alimenti in scadenza (frigo + dispensa)
+    switchTab('tutti-scadenza');
   }
   else if(key==='scaduti'){
-    switchTab('frigo');
-    const chips=document.querySelectorAll('#frigoChips .chip');
-    if(chips[3])setLocFilter('frigo','scaduti',chips[3]);
+    // Mostra tab dedicato con tutti gli alimenti scaduti (frigo + dispensa)
+    switchTab('tutti-scaduti');
   }
 }
 
@@ -1507,9 +1533,12 @@ function switchTab(tab){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab)?.classList.add('active');
   document.getElementById('nb-'+tab)?.classList.add('active');
-  // Mostra la barra stats solo in home
+  // Nascondi stats solo su ricette
   const statsBar=document.getElementById('statsBar');
-  if(statsBar)statsBar.classList.toggle('hidden',tab!=='home');
+  if(statsBar)statsBar.classList.toggle('hidden',tab==='ricette');
+  // Render tab speciali
+  if(tab==='tutti-scadenza')renderTuttiFilter('scadenza');
+  if(tab==='tutti-scaduti')renderTuttiFilter('scaduti');
 }
 
 // RECIPES
@@ -1527,10 +1556,46 @@ function openLocalRecipeModal(r){
 function toggleRecipeOptions(){const a=document.getElementById('recipeResultsArea');a.style.display=a.style.display==='none'?'block':'none';if(a.style.display==='block')renderIngGrid();}
 let recipeSubtab='ai';
 function setRecipeSubtab(tab,el){recipeSubtab=tab;document.querySelectorAll('.rsubtab').forEach(t=>t.classList.remove('active'));el.classList.add('active');document.getElementById('rsub-ai').style.display=tab==='ai'?'block':'none';document.getElementById('rsub-manual').style.display=tab==='manual'?'block':'none';if(tab==='manual')renderIngGrid();}
+function renderTuttiFilter(type){
+  const list=instances.filter(i=>{
+    const d=days(i.expiry);
+    if(type==='scadenza')return d>=0&&d<=7;
+    if(type==='scaduti')return d<0;
+    return true;
+  }).sort((a,b)=>days(a.expiry)-days(b.expiry));
+
+  const titleId=type==='scadenza'?'tuttiFilterTitle':'tuttiFilterTitle2';
+  const listId=type==='scadenza'?'tuttiFilterList':'tuttiFilterList2';
+  const label=type==='scadenza'?'⏰ In scadenza a breve':'💀 Alimenti scaduti';
+
+  const titleEl=document.getElementById(titleId);
+  const listEl=document.getElementById(listId);
+  if(titleEl)titleEl.textContent=label;
+  if(!listEl)return;
+  listEl.innerHTML=list.length
+    ?list.map(i=>instCard(i,true)).join('')
+    :`<div class="empty"><p>Nessun prodotto in questa categoria ✅</p></div>`;
+  list.forEach(ins=>{const wrap=document.getElementById(`pcwrap_${ins.id}`);if(wrap)initSwipeDelete(wrap,()=>deleteInstance(ins.id));});
+}
+
 function renderIngGrid(){
-  const valid=instances.filter(i=>days(i.expiry)>=0);const grid=document.getElementById('ingGrid');
-  if(!valid.length){grid.innerHTML='<p style="font-size:13px;color:var(--text3);grid-column:span 2">Nessun ingrediente.</p>';return;}
-  grid.innerHTML=valid.map(ins=>{const food=foodById(ins.foodId);if(!food.name)return'';const d=days(ins.expiry),isExp=d<=7&&d>=0;return`<div class="ing-item${isExp?' expiring':''}" id="ing_${ins.id}" onclick="toggleIng('${ins.id}')"><span class="ii-emoji">${food.emoji||'📦'}</span><div class="ii-info"><div class="ii-name">${food.name}</div>${isExp?`<span class="ii-badge b-w">${fmtDays(d)}</span>`:''}</div></div>`;}).filter(Boolean).join('');
+  const valid=instances.filter(i=>days(i.expiry)>=0);
+  const grid=document.getElementById('ingGrid');
+  if(!valid.length){grid.innerHTML='<p style="font-size:13px;color:var(--text3);grid-column:span 2">Nessun ingrediente disponibile.</p>';return;}
+  // Deduplicazione per foodId — mostra ogni alimento una sola volta
+  const seen=new Set();
+  const unique=valid.filter(ins=>{if(seen.has(ins.foodId))return false;seen.add(ins.foodId);return true;});
+  grid.innerHTML=unique.map(ins=>{
+    const food=foodById(ins.foodId);if(!food.name)return'';
+    const d=days(ins.expiry),isExp=d<=7&&d>=0;
+    return`<div class="ing-item${isExp?' expiring':''}" id="ing_${ins.id}" onclick="toggleIng('${ins.id}')">
+      <span class="ii-emoji">${food.emoji||'📦'}</span>
+      <div class="ii-info">
+        <div class="ii-name">${food.name}</div>
+        ${isExp?`<span class="ii-badge b-w">${fmtDays(d)}</span>`:''}
+      </div>
+    </div>`;
+  }).filter(Boolean).join('');
   updateIngCounter();
 }
 let selectedIngs=new Set();
