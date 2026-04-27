@@ -70,8 +70,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .queue-spinner{width:16px;height:16px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* STATS — 5 colonne cliccabili */
+/* STATS — 5 colonne cliccabili, solo in home */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-bottom:1px solid var(--border);padding:10px 2px}
+.stats.hidden{display:none}
 .stat{text-align:center;padding:4px 0;cursor:pointer;border-radius:8px;transition:.15s}
 .stat:active{background:var(--accent-light)}
 .stat-n{font-size:20px;font-weight:800;letter-spacing:-.5px;line-height:1}
@@ -393,7 +394,7 @@ select.fi{cursor:pointer}
 </div>
 
 <!-- STATS: 5 voci cliccabili -->
-<div class="stats">
+<div class="stats" id="statsBar">
   <div class="stat" onclick="statClick('alimenti')"><div class="stat-n c-ok" id="sTotal">0</div><div class="stat-l">Alimenti</div></div>
   <div class="stat" onclick="statClick('frigo')"><div class="stat-n c-frigo" id="sFrigo">0</div><div class="stat-l">Frigo</div></div>
   <div class="stat" onclick="statClick('dispensa')"><div class="stat-n c-dispensa" id="sDispensa">0</div><div class="stat-l">Dispensa</div></div>
@@ -874,18 +875,29 @@ function getCatBg(cat){return cmap[cat]||'#EEEDF9';}
 
 // ═══ STATS CLICK → naviga al tab corretto ═══
 function statClick(key){
-  if(key==='alimenti'){switchTab('home');if(!sectionState.alimenti){toggleSection('alimenti');}}
-  else if(key==='frigo'){switchTab('frigo');setLocFilter('frigo','tutti',document.querySelector('#frigoChips .chip'));}
-  else if(key==='dispensa'){switchTab('dispensa');setLocFilter('dispensa','tutti',document.querySelector('#dispensaChips .chip'));}
-  else if(key==='scadenza'){
-    switchTab('frigo');
-    const chip=document.querySelectorAll('#frigoChips .chip')[2];
-    if(chip)setLocFilter('frigo','scadenza',chip);
-  }
-  else if(key==='scaduti'){
+  if(key==='alimenti'){
     switchTab('home');
     if(!sectionState.alimenti)toggleSection('alimenti');
-    setTimeout(()=>{const el=document.getElementById('homeScadutiSection');if(el)el.scrollIntoView({behavior:'smooth'});},200);
+  }
+  else if(key==='frigo'){
+    switchTab('frigo');
+    const chip=document.querySelector('#frigoChips .chip');
+    if(chip)setLocFilter('frigo','tutti',chip);
+  }
+  else if(key==='dispensa'){
+    switchTab('dispensa');
+    const chip=document.querySelector('#dispensaChips .chip');
+    if(chip)setLocFilter('dispensa','tutti',chip);
+  }
+  else if(key==='scadenza'){
+    switchTab('frigo');
+    const chips=document.querySelectorAll('#frigoChips .chip');
+    if(chips[2])setLocFilter('frigo','scadenza',chips[2]);
+  }
+  else if(key==='scaduti'){
+    switchTab('frigo');
+    const chips=document.querySelectorAll('#frigoChips .chip');
+    if(chips[3])setLocFilter('frigo','scaduti',chips[3]);
   }
 }
 
@@ -1286,13 +1298,27 @@ function instCard(ins,showSwipe=true){
 
 function aliCard(f){
   const cnt=instances.filter(i=>i.foodId===f.id).length,cc=catColor(f.category);
+  // Calcola scadenza più vicina tra le istanze attive
+  const activeIns=instances.filter(i=>i.foodId===f.id);
+  let expiryHtml='';
+  if(activeIns.length>0){
+    const nearest=activeIns.reduce((a,b)=>days(a.expiry)<days(b.expiry)?a:b);
+    const d=days(nearest.expiry),s=status(d);
+    expiryHtml=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:10px;color:var(--text3);font-weight:600">Scade ${fmtDate(nearest.expiry)}</span>
+        <span class="pbadge ${s.cls}" style="font-size:10px;padding:2px 7px">${s.lbl}</span>
+      </div>
+      <div class="pbar"><div class="pbf" style="width:${s.pct}%;background:${s.bar}"></div></div>
+    </div>`;
+  }
   const nutriHtml=(f.kcal||f.protein||f.fat||f.carbs)?`<div class="ac-nutri"><div class="nutri-cell"><div class="nutri-val">${f.kcal||'—'}</div><div class="nutri-lbl">kcal</div></div><div class="nutri-cell"><div class="nutri-val">${f.protein||'—'}g</div><div class="nutri-lbl">prot.</div></div><div class="nutri-cell"><div class="nutri-val">${f.fat||'—'}g</div><div class="nutri-lbl">grassi</div></div><div class="nutri-cell"><div class="nutri-val">${f.carbs||'—'}g</div><div class="nutri-lbl">carb.</div></div></div>${f.values_estimated?'<div class="ai-estimated-badge">🤖 Valori stimati AI</div>':''}`:'' ;
   return `<div class="ac" onclick="openEditFood('${f.id}')">
     <div class="ac-head">
       <div class="ac-icon" style="background:${f.color||'#EEEDF9'}">${f.emoji||'📦'}</div>
       <div class="ac-title"><div class="ac-name">${f.name}</div><div class="ac-cat"><span class="ac-dot" style="background:${cc}"></span>${f.category||''}${f.brand?' · '+f.brand:''}</div></div>
       <div class="ac-actions">${cnt>0?`<span class="ac-badge">${cnt} in dispensa</span>`:''}<button class="ac-del" onclick="event.stopPropagation();deleteFoodConfirm('${f.id}')">${ICO.close}</button></div>
-    </div>${nutriHtml}${f.allergens?.length?`<div class="ac-tags">${f.allergens.map(a=>`<span class="tag allergen">${a}</span>`).join('')}</div>`:''}
+    </div>${nutriHtml}${expiryHtml}${f.allergens?.length?`<div class="ac-tags">${f.allergens.map(a=>`<span class="tag allergen">${a}</span>`).join('')}</div>`:''}
   </div>`;
 }
 
@@ -1481,6 +1507,9 @@ function switchTab(tab){
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab)?.classList.add('active');
   document.getElementById('nb-'+tab)?.classList.add('active');
+  // Mostra la barra stats solo in home
+  const statsBar=document.getElementById('statsBar');
+  if(statsBar)statsBar.classList.toggle('hidden',tab!=='home');
 }
 
 // RECIPES
